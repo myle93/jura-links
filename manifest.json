@@ -1,0 +1,11 @@
+{
+	"id": "article-law-highlighter",
+	"name": "Article Law Highlighter",
+	"version": "1.0.0",
+	"minAppVersion": "0.15.0",
+	"description": "Highlight law articles and insert hyperlink in Obsidian",
+	"author": "Obsidian",
+	"authorUrl": "https://obsidian.md",
+	"fundingUrl": "https://obsidian.md/pricing",
+	"isDesktopOnly": false
+}
