@@ -29,7 +29,7 @@ export default class ExamplePlugin extends Plugin {
 		const url = 'https://www.gesetze-im-internet.de';
 		fileContent = fileContent.replace(regex, (match, art, norm, absatz, satz, nr, lit, gesetz, buch) => {
 			gesetz = gesetz.toLowerCase();
-			return `[<span class='law-article'>${match}</span>](${url}/${gesetz}/__${norm}.html)`;
+			return `<a class="iframe-link" href="${url}/${gesetz}/__${norm}.html">${match}<iframe src="${url}/${gesetz}/__${norm}.html"></iframe></a>`
 		});
 		if (editor) {
 			editor.setValue(fileContent);

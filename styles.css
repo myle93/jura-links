@@ -9,3 +9,12 @@ If your plugin does not need CSS, delete this file.
 .law-article {
     color: skyblue;
 }
+
+.iframe-link iframe {
+    display: none;
+}
+.iframe-link:hover iframe {
+    display: block;
+    height: calc(100vh - 30px);
+    width: 100%;
+}
