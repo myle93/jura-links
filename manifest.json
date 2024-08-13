@@ -1,6 +1,6 @@
 {
-	"id": "article-law-highlighter",
-	"name": "Article Law Highlighter",
+	"id": "law-article-highlighter",
+	"name": "Law Article Highlighter",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
 	"description": "Highlight law articles and insert hyperlink in Obsidian",
