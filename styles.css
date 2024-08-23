@@ -18,3 +18,8 @@ If your plugin does not need CSS, delete this file.
     height: calc(100vh - 30px);
     width: 100%;
 }
+
+.no-underline:hover {
+    text-decoration: none;
+    color: #a159e4;
+}
