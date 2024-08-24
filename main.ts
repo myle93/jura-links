@@ -9,9 +9,10 @@ export default class ExamplePlugin extends Plugin {
 		});
 
 		// This event is triggered when document is changed
-		this.app.workspace.on("editor-change", (editor) => {
-			this.linkLegalArticlesForFistLineOfLastParagraph(editor);
-		});
+		// This function is still not working as expected
+		// this.app.workspace.on("editor-change", (editor) => {
+		// 	this.linkLegalArticlesForFistLineOfLastParagraph(editor);
+		// });
 
 		this.addCommand({
 			id: 'apply',
