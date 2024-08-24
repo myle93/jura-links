@@ -115,9 +115,11 @@ export default class ExamplePlugin extends Plugin {
 
 			// lastNorm: 25
 			const lastNormGroup = groups.lnormgr;
-			const lastNorm = lastNormGroup.lnorm;
-			const lastNormLinks = `<a class="no-underline" href="${lawUrl}/${gesetz}${buch}/${lastNorm}.html">${lastNormGroup}</a>`;
-			lawMatch = lawMatch.replace(lastNormGroup, lastNormLinks);
+			const lastNorm = groups.lnorm;
+			if(lastNorm && lastNormGroup) {
+				const lastNormLinks = `<a class="no-underline" href="${lawUrl}/${gesetz}${buch}/${lastNorm}.html">${lastNormGroup}</a>`;
+				lawMatch = lawMatch.replace(lastNormGroup, lastNormLinks);
+			}
 
 			const gp1 = groups.p1;
 			if(/§§+/.test(gp1)) {
