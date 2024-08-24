@@ -90,21 +90,24 @@ export default class ExamplePlugin extends Plugin {
 		fileContent = fileContent.replace(lawRegex, (match, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22, p23, p24, p25, p26, p27, p28, p29, p30, p31, p32, p33, p34, p35, p36, p37, p38, p39, p40, p41, p42, p43, p44, p45, p46, p47, p48, p49, p50, groups) => {
 
 			// Transform law name for the URL
-			const gesetz = groups.gesetz.toLowerCase()
+			let gesetz = groups.gesetz.toLowerCase()
 						   .replace(/ä/g, 'ae')
 						   .replace(/ö/g, 'oe')
 						   .replace(/ü/g, 'ue')
 						   .replace(/ß/g, 'ss')
-						   .replace(/\s/g, '');
+						   .trim();
 			
 			
 			// Transform book name for the URL			
 			const buch = groups.buch ? `_${groups.buch.toUpperCase()}` : '';
 
-			if(gesetz === 'sgb' && !groups.buch) {
-				let p1 = groups.p1;
-				match = match.replace(p1, `<span>${p1}</span>`);
-				return match;
+			if (gesetz.includes('sgb')) {
+				if(!groups.buch) {
+					let p1 = groups.p1;
+					match = match.replace(p1, `<span>${p1}</span>`);
+					return match;
+				}
+				gesetz = 'sgb';
 			}
 
 			// e. g. match: §§ 23 I, II, 24 II, 25 II BGB
