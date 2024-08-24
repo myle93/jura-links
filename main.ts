@@ -70,8 +70,8 @@ export default class ExamplePlugin extends Plugin {
 
 	private findAndLinkLegalArticles(fileContent: string){
 		
-		const lawRegex = /(?<!html">)(?<p1>§+|Art\.|Artikel)\s*(?<p2>(?<normgr>(?<norm>\d+(?:\w\b)?)\s*(?:(Abs\.|Absatz)\s*(?<absatz>\d+(?:\s*(,|-|und)\s*\d+)*)|(?<absatzrom>[IVXLCDM]+(?:\s*(,|-|und)\s*[IVXLCDM]+)*))?\s*(?:(S\.|Satz)?\s*(?<satz>\d+(?:\s*(,|-|und)\s*\d+)*))?\s*(?:(Alt\.|Alternativ)\s*(?<alternative>\d+(?:\s*(,|-|und)\s*\d+)*))?\s*(?:(Var\.|Variante)\s*(?<variante>\d+(?:\s*(,|-|und)\s*\d+)*))?\s*(?:(Nr\.|Nummer)\s*(?<nr>\d+(?:\w\b)?(?:\s*(,|-|und)\s*\d+(?:\w\b)?)*))?\s*(?:(lit\.|Buchstabe)\s*(?<lit>[a-z][a-z-]*[a-z]?))?.{0,10}?)(?:\s*(,|-|und)\s*(?<lnormgr>(?<lnorm>\d+(?:\w\b)?)\s*(?:(Abs\.|Absatz)\s*(?<labsatz>\d+(?:\s*(,|-|und)\s*\d+)*)|(?<labsatzrom>[IVXLCDM]+(?:\s*(,|-|und)\s*[IVXLCDM]+)*))?\s*(?:(S\.|Satz)?\s*(?<lsatz>\d+(?:\s*(,|-|und)\s*\d+)*))?\s*(?:(Alt\.|Alternativ)\s*(?<lalternative>\d+(?:\s*(,|-|und)\s*\d+)*))?\s*(?:(Var\.|Variante)\s*(?<lvariante>\d+(?:\s*(,|-|und)\s*\d+)*))?\s*(?:(Nr\.|Nummer)\s*(?<lnr>\d+(?:\w\b)?(?:\s*(,|-|und)\s*\d+(?:\w\b)?)*))?\s*(?:(lit\.|Buchstabe)\s*(?<llit>[a-z][a-z-]*[a-z]?))?.{0,10}?))*)(?<gesetz>(SGB\s*(?<buch>[IVX]+)|\b[A-ZÄÖÜß][A-ZÄÖÜẞa-zäöüß-]*[A-ZÄÖÜß]))/gm;
-
+		const lawRegex = /(?<!html">)(?<p1>§+|Art\.|Artikel)\s*(?<p2>(?<normgr>(?<norm>\d+(?:\w\b)?)\s*(?:(Abs\.|Absatz)\s*(?<absatz>\d+(?:\s*(,|-|und)\s*\d+)*)|(?<absatzrom>[IVXLCDM]+(?:\s*(,|-|und)\s*[IVXLCDM]+)*))?\s*(?:(S\.|Satz)?\s*(?<satz>\d+(?:\s*(,|-|und)\s*\d+)*))?\s*(?:(Alt\.|Alternativ)\s*(?<alternative>\d+(?:\s*(,|-|und)\s*\d+)*))?\s*(?:(Var\.|Variante)\s*(?<variante>\d+(?:\s*(,|-|und)\s*\d+)*))?\s*(?:(Nr\.|Nummer)\s*(?<nr>\d+(?:\w\b)?(?:\s*(,|-|und)\s*\d+(?:\w\b)?)*))?\s*(?:(lit\.|Buchstabe)\s*(?<lit>[a-z][a-z-]*[a-z]?))?.{0,10}?)(?:\s*(,|-|und)\s*(?<lnormgr>(?<lnorm>\d+(?:\w\b)?)\s*(?:(Abs\.|Absatz)\s*(?<labsatz>\d+(?:\s*(,|-|und)\s*\d+)*)|(?<labsatzrom>[IVXLCDM]+(?:\s*(,|-|und)\s*[IVXLCDM]+)*))?\s*(?:(S\.|Satz)?\s*(?<lsatz>\d+(?:\s*(,|-|und)\s*\d+)*))?\s*(?:(Alt\.|Alternativ)\s*(?<lalternative>\d+(?:\s*(,|-|und)\s*\d+)*))?\s*(?:(Var\.|Variante)\s*(?<lvariante>\d+(?:\s*(,|-|und)\s*\d+)*))?\s*(?:(Nr\.|Nummer)\s*(?<lnr>\d+(?:\w\b)?(?:\s*(,|-|und)\s*\d+(?:\w\b)?)*))?\s*(?:(lit\.|Buchstabe)\s*(?<llit>[a-z][a-z-]*[a-z]?))?.{0,10}?))*)(?<gesetz>\b([A-ZÄÖÜß][A-ZÄÖÜẞa-zäöüß-]*\s))(?<buch>[IVX]{1,3})?/gm;
+		
 		const lawChainRegex = /(?:\s*(,|-|und)\s*)(?<normgr>(?<norm>\d+(?:\w\b)?)\s*(?:(Abs\.|Absatz)\s*(?<absatz>\d+(?:\s*(,|-|und)\s*\d+)*)|(?<absatzrom>[IVXLCDM]+(?:\s*(,|-|und)\s*[IVXLCDM]+)*))?\s*(?:(S\.|Satz)?\s*(?<satz>\d+(?:\s*(,|-|und)\s*\d+)*))?\s*(?:(Alt\.|Alternativ)\s*(?<alternative>\d+(?:\s*(,|-|und)\s*\d+)*))?\s*(?:(Var\.|Variante)\s*(?<variante>\d+(?:\s*(,|-|und)\s*\d+)*))?\s*(?:(Nr\.|Nummer)\s*(?<nr>\d+(?:\w\b)?(?:\s*(,|-|und)\s*\d+(?:\w\b)?)*))?\s*(?:(lit\.|Buchstabe)\s*(?<lit>[a-z][a-z-]*[a-z]?))?.{0,10}?)/gm;
 	
 		const caseRegex = /(?<!<a\s+href="[^"]{0,1000}">)\b(?:[CTF]-\d+\/\d{2}|(?:[IVXLCDM]+\s*)?\d+\s*[A-Za-z]{1,3}\s*\d+\/\d{2}|\d{1,7}\/\d{2})\b/g;
@@ -103,6 +103,14 @@ export default class ExamplePlugin extends Plugin {
 				return match;
 			}
 
+			// Überprüfe, ob es sich um eine einzige Norm handelt
+			if (!groups.lnormgr) {
+				const norm = groups.norm;
+				const normGroup = groups.normgr;
+				const normLink = `<a class="no-underline" href="${lawUrl}/${gesetz}${buch}/${norm}.html">${match}</a>`;
+				return `${normLink}`;
+			}
+			
 			// e. g. match: §§ 23 I, II, 24 II, 25 II BGB
 			// lawMatch will be: 23 I, II, 24 II, 25 II
 			let lawMatch: string = groups.p2;
