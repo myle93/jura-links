@@ -93,10 +93,9 @@ export default class ExamplePlugin extends Plugin {
 						   .replace(/ä/g, 'ae')
 						   .replace(/ö/g, 'oe')
 						   .replace(/ü/g, 'ue')
-						   .replace(/ß/g, 'ss');
+						   .replace(/ß/g, 'ss')
+						   .replace(/\s/g, '');
 			
-			// Entferne Leerzeichen aus <gesetz>
-			const gesetzNoSpace = gesetz.replace(/\s/g, '');
 			
 			// Transform book name for the URL
 			const buch = groups.buch ? `_${groups.buch.toUpperCase()}` : '';
@@ -111,7 +110,7 @@ export default class ExamplePlugin extends Plugin {
 			if (!groups.lnormgr) {
 				const norm = groups.norm;
 				const normGroup = groups.normgr;
-				const normLink = `<a class="no-underline" href="${lawUrl}/${gesetzNoSpace}${buch}/${norm}.html">${match}</a>`;
+				const normLink = `<a class="no-underline" href="${lawUrl}/${gesetz}${buch}/${norm}.html">${match}</a>`;
 				return `${normLink}`;
 			}
 			
@@ -122,14 +121,14 @@ export default class ExamplePlugin extends Plugin {
 			// fistNorm: 23
 			const firstNormGroup = groups.normgr;
 			const firstNorm = firstNormGroup.norm;
-			const firstNormLinks = `<a class="no-underline" href="${lawUrl}/${gesetzNoSpace}${buch}/${firstNorm}.html">${firstNormGroup}</a>`;
+			const firstNormLinks = `<a class="no-underline" href="${lawUrl}/${gesetz}${buch}/${firstNorm}.html">${firstNormGroup}</a>`;
 			lawMatch = lawMatch.replace(firstNormGroup, firstNormLinks);
 
 			// lastNorm: 25
 			const lastNormGroup = groups.lnormgr;
 			const lastNorm = groups.lnorm;
 			if(lastNorm && lastNormGroup) {
-				const lastNormLinks = `<a class="no-underline" href="${lawUrl}/${gesetzNoSpace}${buch}/${lastNorm}.html">${lastNormGroup}</a>`;
+				const lastNormLinks = `<a class="no-underline" href="${lawUrl}/${gesetz}${buch}/${lastNorm}.html">${lastNormGroup}</a>`;
 				lawMatch = lawMatch.replace(lastNormGroup, lastNormLinks);
 			}
 
@@ -139,7 +138,7 @@ export default class ExamplePlugin extends Plugin {
 				lawMatch = lawMatch.replace(lawChainRegex, (match, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22, p23, p24, groups) => {
 					const norm = groups.norm;
 					const normGroup = groups.normgr;
-					const normLink = `<a class="no-underline" href="${lawUrl}/${gesetzNoSpace}${buch}/${norm}.html">${normGroup}</a>`;
+					const normLink = `<a class="no-underline" href="${lawUrl}/${gesetz}${buch}/${norm}.html">${normGroup}</a>`;
 					match = match.replace(normGroup, normLink);
 					return match;
 				});
