@@ -5,15 +5,19 @@ export default class ExamplePlugin extends Plugin {
 	onload() {
 		// This event is triggered when document is initially opened
 		this.app.workspace.on("active-leaf-change", () => {
-			this.findAndLinkLawArticles();
+			this.readActiveFileAndLinkLawArticles();
+		});
+
+		// This event is triggered when document is changed
+		this.app.workspace.on("editor-change", (editor) => {
+			this.linkLawArticlesForFistLineOfLastParagraph(editor);
 		});
 
 		this.addCommand({
 			id: 'apply',
 			name: 'apply',
 			editorCallback: (editor: Editor) => {
-				const content = editor.getDoc().getValue();
-				this.findAndLinkLawArticles(content, editor);
+				this.linkLawArticlesForFistLineOfLastParagraph(editor);
 			}
 		});
 	}
@@ -21,11 +25,37 @@ export default class ExamplePlugin extends Plugin {
 	onunload() {
 	}
 
-	private findAndLinkLawArticles(fileContent?: string, editor?: Editor) {
-		if (!fileContent || !editor) {
+	private async readActiveFileAndLinkLawArticles() {
+		const file = this.app.workspace.getActiveFile();
+		if (file) {
+			const content = await this.app.vault.read(file);
+			const newFileContent = this.findAndLinkLawArticles(content);
+			if (!newFileContent) {
+				return;
+			}
+			this.app.vault.modify(file, newFileContent);
+		}
+	}
+
+	private async linkLawArticlesForFistLineOfLastParagraph(editor: Editor) {
+		// A new paragraph is created when the previous line is empty.
+		// So if the previous line is not empty, return.
+		// Else edit the current line.
+		const previousLineContent = editor.getLine(editor.lastLine()-1)
+		if (previousLineContent.trim().length > 0) {
 			return;
 		}
-	
+
+		const currentLineContent = editor.getLine(editor.lastLine());
+		const newcurrentLineContent = this.findAndLinkLawArticles(currentLineContent);
+		if (!newcurrentLineContent) {
+			return;
+		}
+		editor.setLine(editor.lastLine(), newcurrentLineContent);
+	}
+
+	private findAndLinkLawArticles(fileContent: string){
+		
 		const lawRegex = /(?<!\.html">)(?<p1>§+|Art\.|Artikel)\s*(?<p2>(?<norm>\d+(?:\w\b)?(?:\s*(,|-|und)\s*\d+(?:\w\b)?)*)\s*(?:(Abs\.|Absatz)\s*(?<absatz>\d+(?:\s*(,|-|und)\s*\d+)*)|(?<absatzrom>[IVXLCDM]+(?:\s*(,|-|und)\s*[IVXLCDM]+)*))?\s*(?:(S\.|Satz)?\s*(?<satz>\d+(?:\s*(,|-|und)\s*\d+)*))?\s*(?:(Alt\.|Alternativ)\s*(?<alternative>\d+(?:\s*(,|-|und)\s*\d+)*))?\s*(?:(Var\.|Variante)\s*(?<variante>\d+(?:\s*(,|-|und)\s*\d+)*))?\s*(?:(Nr\.|Nummer)\s*(?<nr>\d+(?:\w\b)?(?:\s*(,|-|und)\s*\d+(?:\w\b)?)*))?\s*(?:(lit\.|Buchstabe)\s*(?<lit>[a-z][a-z-]*[a-z]?))?.{0,10}?(?:\s*(,|-|und)\s*(?<lnorm>\d+(?:\w\b)?(?:\s*(,|-|und)\s*\d+(?:\w\b)?)*)\s*(?:(Abs\.|Absatz)\s*(?<labsatz>\d+(?:\s*(,|-|und)\s*\d+)*)|(?<labsatzrom>[IVXLCDM]+(?:\s*(,|-|und)\s*[IVXLCDM]+)*))?\s*(?:(S\.|Satz)?\s*(?<lsatz>\d+(?:\s*(,|-|und)\s*\d+)*))?\s*(?:(Alt\.|Alternativ)\s*(?<lalternative>\d+(?:\s*(,|-|und)\s*\d+)*))?\s*(?:(Var\.|Variante)\s*(?<lvariante>\d+(?:\s*(,|-|und)\s*\d+)*))?\s*(?:(Nr\.|Nummer)\s*(?<lnr>\d+(?:\w\b)?(?:\s*(,|-|und)\s*\d+(?:\w\b)?)*))?\s*(?:(lit\.|Buchstabe)\s*(?<llit>[a-z][a-z-]*[a-z]?))?.{0,10}?)*)(?<gesetz>(SGB\s*(?<buch>[IVX]+)|\b[A-ZÄÖÜß][A-ZÄÖÜẞa-zäöüß-]*[A-ZÄÖÜß]))/gm;
 	
 		const caseRegex = /(?<!<a\s+href="[^"]{0,1000}">)\b(?:[CTF]-\d+\/\d{2}|(?:[IVXLCDM]+\s*)?\d+\s*[A-Za-z]{1,3}\s*\d+\/\d{2}|\d{1,7}\/\d{2})\b/g;
@@ -70,6 +100,15 @@ export default class ExamplePlugin extends Plugin {
 			return `<span style="color: #a159e4;">${newMatch}</span>`;
 			
 		});
-		editor.setValue(fileContent);
+	
+		fileContent = fileContent.replace(caseRegex, (match) => {
+			return `<a href="${caseUrl}${encodeURIComponent(match)}">${match}</a>`;
+		});
+	
+		fileContent = fileContent.replace(journalRegex, (match, journal, year, page) => {
+			return `<a href="${journalUrl}${encodeURIComponent(match)}">${match}</a>`;
+		});
+	
+		return fileContent;
 	}
 }
