@@ -120,15 +120,16 @@ export default class ExamplePlugin extends Plugin {
 			// lastNorm: 25
 			let lastNormGroup = groups.lnormgr;
 			let lastNorm = groups.lnorm;
-			if(lastNorm && lastNormGroup) {
+			if (lastNorm && lastNormGroup) {
 				lastNormGroup = lastNormGroup.trim();
 				lastNorm = lastNorm.trim();
 				const lastNormLinks = `<a class="no-underline" href="${lawUrl}/${gesetz}${buch}/${lastNorm}.html">${lastNormGroup}</a>`;
 				lawMatch = lawMatch.replace(lastNormGroup, lastNormLinks);
 			}
 
+			// If the match is a chain of laws, search and link for further laws
 			const gp1 = groups.p1;
-			if(/§§+/.test(gp1)) {
+			if (gp1 !== '§') {
 				// matches of lawRegexChain: ["", 24 II", ", 25 II"]
 				lawMatch = lawMatch.replace(lawChainRegex, (match, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22, p23, p24, groups) => {
 					const norm = groups.norm.trim();
