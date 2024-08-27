@@ -1,4 +1,5 @@
 import { Editor, Plugin } from "obsidian";
+import { caseRegex, journalRegex, lawChainRegex, lawRegex } from "./regex";
 
 export default class ExamplePlugin extends Plugin {
 
@@ -70,14 +71,6 @@ export default class ExamplePlugin extends Plugin {
 	}
 
 	private findAndLinkLegalArticles(fileContent: string){
-		
-		const lawRegex = /(?<!html">)(?<p1>§+|Art\.|Artikel)\s*(?<p2>(?<normgr>(?<norm>\d+(?:\w\b)?)\s*(?:(Abs\.|Absatz)\s*(?<absatz>\d+(?:\s*(,|-|und)\s*\d+)*)|(?<absatzrom>[IVXLCDM]+(?:\s*(,|-|und)\s*[IVXLCDM]+)*))?\s*(?:(S\.|Satz)?\s*(?<satz>\d+(?:\s*(,|-|und)\s*\d+)*))?\s*(?:(Alt\.|Alternativ)\s*(?<alternative>\d+(?:\s*(,|-|und)\s*\d+)*))?\s*(?:(Var\.|Variante)\s*(?<variante>\d+(?:\s*(,|-|und)\s*\d+)*))?\s*(?:(Nr\.|Nummer)\s*(?<nr>\d+(?:\w\b)?(?:\s*(,|-|und)\s*\d+(?:\w\b)?)*))?\s*(?:(lit\.|Buchstabe)\s*(?<lit>[a-z][a-z-]*[a-z]?))?.{0,10}?)(?:\s*(,|-|und)\s*(?<lnormgr>(?<lnorm>\d+(?:\w\b)?)\s*(?:(Abs\.|Absatz)\s*(?<labsatz>\d+(?:\s*(,|-|und)\s*\d+)*)|(?<labsatzrom>[IVXLCDM]+(?:\s*(,|-|und)\s*[IVXLCDM]+)*))?\s*(?:(S\.|Satz)?\s*(?<lsatz>\d+(?:\s*(,|-|und)\s*\d+)*))?\s*(?:(Alt\.|Alternativ)\s*(?<lalternative>\d+(?:\s*(,|-|und)\s*\d+)*))?\s*(?:(Var\.|Variante)\s*(?<lvariante>\d+(?:\s*(,|-|und)\s*\d+)*))?\s*(?:(Nr\.|Nummer)\s*(?<lnr>\d+(?:\w\b)?(?:\s*(,|-|und)\s*\d+(?:\w\b)?)*))?\s*(?:(lit\.|Buchstabe)\s*(?<llit>[a-z][a-z-]*[a-z]?))?.{0,10}?))*)(?<gesetz>(SGB\s*(?<buch>[IVX]+)|\b[A-ZÄÖÜß][A-ZÄÖÜẞa-zäöüß-]*[A-ZÄÖÜß]))/gm;
-
-		const lawChainRegex = /(?:\s*(,|-|und)\s*)(?<normgr>(?<norm>\d+(?:\w\b)?)\s*(?:(Abs\.|Absatz)\s*(?<absatz>\d+(?:\s*(,|-|und)\s*\d+)*)|(?<absatzrom>[IVXLCDM]+(?:\s*(,|-|und)\s*[IVXLCDM]+)*))?\s*(?:(S\.|Satz)?\s*(?<satz>\d+(?:\s*(,|-|und)\s*\d+)*))?\s*(?:(Alt\.|Alternativ)\s*(?<alternative>\d+(?:\s*(,|-|und)\s*\d+)*))?\s*(?:(Var\.|Variante)\s*(?<variante>\d+(?:\s*(,|-|und)\s*\d+)*))?\s*(?:(Nr\.|Nummer)\s*(?<nr>\d+(?:\w\b)?(?:\s*(,|-|und)\s*\d+(?:\w\b)?)*))?\s*(?:(lit\.|Buchstabe)\s*(?<lit>[a-z][a-z-]*[a-z]?))?.{0,10}?)/gm;
-	
-		const caseRegex = /(?<!<a\s+href="[^"]{0,1000}">)\b(?:[CTF]-\d+\/\d{2}|(?:[IVXLCDM]+\s*)?\d+\s*[A-Za-z]{1,3}\s*\d+\/\d{2}|\d{1,7}\/\d{2})\b/g;
-	
-		const journalRegex = /(?<!<a\s+href="[^"]{0,1000}">)\b(?<journal>[A-Z]{2,4}(?:-[A-Z]{2,4})?)\s*(?<year>\d{4}),\s*(?<page>\d+)(?:\s*\(\d+\))?\b/gm;
 	
 		if (!lawRegex.test(fileContent) && !caseRegex.test(fileContent) && !journalRegex.test(fileContent)) {
 			return;
@@ -110,20 +103,26 @@ export default class ExamplePlugin extends Plugin {
 				gesetz = 'sgb';
 			}
 
+			if (gesetz === 'bruessel-ia-vo') {
+				gesetz = 'eugvvo';
+			}
+
 			// e. g. match: §§ 23 I, II, 24 II, 25 II BGB
 			// lawMatch will be: 23 I, II, 24 II, 25 II
 			let lawMatch: string = groups.p2;
 
 			// fistNorm: 23
-			const firstNormGroup = groups.normgr;
+			const firstNormGroup = groups.normgr.trim();
 			const firstNorm = groups.norm;
 			const firstNormLinks = `<a class="no-underline" href="${lawUrl}/${gesetz}${buch}/${firstNorm}.html">${firstNormGroup}</a>`;
 			lawMatch = lawMatch.replace(firstNormGroup, firstNormLinks);
 
 			// lastNorm: 25
-			const lastNormGroup = groups.lnormgr;
-			const lastNorm = groups.lnorm;
+			let lastNormGroup = groups.lnormgr;
+			let lastNorm = groups.lnorm;
 			if(lastNorm && lastNormGroup) {
+				lastNormGroup = lastNormGroup.trim();
+				lastNorm = lastNorm.trim();
 				const lastNormLinks = `<a class="no-underline" href="${lawUrl}/${gesetz}${buch}/${lastNorm}.html">${lastNormGroup}</a>`;
 				lawMatch = lawMatch.replace(lastNormGroup, lastNormLinks);
 			}
@@ -132,8 +131,8 @@ export default class ExamplePlugin extends Plugin {
 			if(/§§+/.test(gp1)) {
 				// matches of lawRegexChain: ["", 24 II", ", 25 II"]
 				lawMatch = lawMatch.replace(lawChainRegex, (match, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22, p23, p24, groups) => {
-					const norm = groups.norm;
-					const normGroup = groups.normgr;
+					const norm = groups.norm.trim();
+					const normGroup = groups.normgr.trim();
 					const normLink = `<a class="no-underline" href="${lawUrl}/${gesetz}${buch}/${norm}.html">${normGroup}</a>`;
 					match = match.replace(normGroup, normLink);
 					return match;
