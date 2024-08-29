@@ -1,15 +1,30 @@
 import { Editor, Plugin } from "obsidian";
+import { caseRegex, journalRegex, lawChainRegex, lawRegex } from "./regex";
 
 export default class ExamplePlugin extends Plugin {
 
 	onload() {
+		// This event is triggered when document is initially opened
+		this.app.workspace.on("active-leaf-change", () => {
+			this.readActiveFileAndLinkLegalArticles();
+		});
+
+		// This event is triggered when document is changed
+		// This function is still not working as expected
+		// this.app.workspace.on("editor-change", (editor) => {
+		// 	this.linkLegalArticlesForFistLineOfLastParagraph(editor);
+		// });
 
 		this.addCommand({
 			id: 'apply',
 			name: 'apply',
 			editorCallback: (editor: Editor) => {
 				const content = editor.getDoc().getValue();
-				this.findAndReplaceLawArticlesWithHyperLinkAndIframe(content, editor);
+				const newContent = this.findAndLinkLegalArticles(content);
+				if (!newContent) {
+					return;
+				}
+				editor.setValue(newContent);
 			}
 		});
 	}
@@ -17,16 +32,45 @@ export default class ExamplePlugin extends Plugin {
 	onunload() {
 	}
 
-	private findAndReplaceLawArticlesWithHyperLinkAndIframe(fileContent?: string, editor?: Editor) {
-		if (!fileContent || !editor) {
+	private async readActiveFileAndLinkLegalArticles() {
+		const file = this.app.workspace.getActiveFile();
+		if (file) {
+			const content = await this.app.vault.read(file);
+			const newFileContent = this.findAndLinkLegalArticles(content);
+			if (!newFileContent) {
+				return;
+			}
+			this.app.vault.modify(file, newFileContent);
+		}
+	}
+
+	private linkLegalArticlesForFistLineOfLastParagraph(editor: Editor) {
+		// If the editor is currently one-line, edit the current line.
+		if(editor.lineCount() === 1) {
+			this.editCurrentLine(editor);
 			return;
 		}
-	
-		const lawRegex = /(?<!<a\s+href="[^"]{0,1000}">)(?<p1>§§?|Art\.?|Artikel)\s*(?<norm>(?:\d+(?:\w\b)?(?:\s*,\s*\d+(?:\w\b)?)*))(?:\s*(?:(?<absatz>[IVXLCDM]+|\d+))?\s*(?:(?<satz>\d+))?\s*(?:Alt\.\s*(?<alternative>\d+))?\s*(?:Var\.\s*(?<variante>\d+))?\s*(?:Nr\.\s*(?<nr>\d+(?:\w\b)?))?\s*(?:lit\.\s*(?<lit>[a-z]))?)?\s*(?<gesetz>[A-Z][A-Za-z0-9-]*(?:-[IVX]+)?(?:-[A-Za-z0-9]+)*)\s*(?<buch>[IVX]+)?(?=\W|$)/gm;
-	
-		const caseRegex = /(?<!<a\s+href="[^"]{0,1000}">)\b(?:[CTF]-\d+\/\d{2}|(?:[IVXLCDM]+\s*)?\d+\s*[A-Za-z]{1,3}\s*\d+\/\d{2}|\d{1,7}\/\d{2})\b/g;
-	
-		const journalRegex = /(?<!<a\s+href="[^"]{0,1000}">)\b(?<journal>[A-Z]{2,4}(?:-[A-Z]{2,4})?)\s*(?<year>\d{4}),\s*(?<page>\d+)(?:\s*\(\d+\))?\b/gm;
+		// A new paragraph is created when the previous line is empty.
+		// So if the previous line is not empty, return.
+		// Else edit the current line.
+		const previousLineContent = editor.getLine(editor.lastLine()-1)
+		console.log(previousLineContent);
+		if (previousLineContent.trim().length > 0) {
+			return;
+		}
+		this.editCurrentLine(editor);		
+	}
+
+	private editCurrentLine(editor: Editor) {
+		const currentLineContent = editor.getLine(editor.lastLine());
+		const newcurrentLineContent = this.findAndLinkLegalArticles(currentLineContent);
+		if (!newcurrentLineContent) {
+			return;
+		}
+		editor.setLine(editor.lastLine(), newcurrentLineContent);
+	}
+
+	private findAndLinkLegalArticles(fileContent: string){
 	
 		if (!lawRegex.test(fileContent) && !caseRegex.test(fileContent) && !journalRegex.test(fileContent)) {
 			return;
@@ -36,28 +80,69 @@ export default class ExamplePlugin extends Plugin {
 		const caseUrl = 'https://dejure.org/dienste/vernetzung/rechtsprechung?Text=';
 		const journalUrl = 'https://dejure.org/dienste/vernetzung/rechtsprechung?Text=';
 	
-		fileContent = fileContent.replace(lawRegex, (match, p1, norm, absatz, satz, alternative, variante, nr, lit, gesetz, buch) => {
+		fileContent = fileContent.replace(lawRegex, (match, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22, p23, p24, p25, p26, p27, p28, p29, p30, p31, p32, p33, p34, p35, p36, p37, p38, p39, p40, p41, p42, p43, p44, p45, p46, p47, p48, p49, p50, groups) => {
+
 			// Transform law name for the URL
-			gesetz = gesetz.toLowerCase()
+			let gesetz = groups.gesetz.toLowerCase()
 						   .replace(/ä/g, 'ae')
 						   .replace(/ö/g, 'oe')
 						   .replace(/ü/g, 'ue')
-						   .replace(/ß/g, 'ss');
+						   .replace(/ß/g, 'ss')
+						   .trim();
 			
-			buch = buch ? `_${buch.toUpperCase()}` : '';
-	
-			// Check if it's a chain of laws (§§ or Artt.)
-			if (p1 === '§§' || p1 === 'Artt.') {
-				const normList = norm.split(',').map((n: string) => n.trim());
-				const links = normList.map((n: string, index: number) => {
-					return `<a href="${lawUrl}/${gesetz}${buch}/${n}.html">${index === 0 ? p1.charAt(0) : ''} ${n}</a>`;
-				}).join(', ');
-				
-				const extras = [absatz, satz, alternative, variante, nr, lit].filter(Boolean).join(' ');
-				return `${links}${extras ? ' ' + extras : ''} ${gesetz.toUpperCase()}`;
-			} else {
-				return `<a href="${lawUrl}/${gesetz}${buch}/${norm}.html">${match}</a>`;
+			
+			// Transform book name for the URL			
+			const buch = groups.buch ? `_${groups.buch.toUpperCase()}` : '';
+
+			if (gesetz.includes('sgb')) {
+				if(!groups.buch) {
+					let p1 = groups.p1;
+					match = match.replace(p1, `<span>${p1}</span>`);
+					return match;
+				}
+				gesetz = 'sgb';
 			}
+
+			if (gesetz === 'bruessel-ia-vo') {
+				gesetz = 'eugvvo';
+			}
+
+			// e. g. match: §§ 23 I, II, 24 II, 25 II BGB
+			// lawMatch will be: 23 I, II, 24 II, 25 II
+			let lawMatch: string = groups.p2;
+
+			// fistNorm: 23
+			const firstNormGroup = groups.normgr.trim();
+			const firstNorm = groups.norm;
+			const firstNormLinks = `<a class="no-underline" href="${lawUrl}/${gesetz}${buch}/${firstNorm}.html">${firstNormGroup}</a>`;
+			lawMatch = lawMatch.replace(firstNormGroup, firstNormLinks);
+
+			// lastNorm: 25
+			let lastNormGroup = groups.lnormgr;
+			let lastNorm = groups.lnorm;
+			if(lastNorm && lastNormGroup) {
+				lastNormGroup = lastNormGroup.trim();
+				lastNorm = lastNorm.trim();
+				const lastNormLinks = `<a class="no-underline" href="${lawUrl}/${gesetz}${buch}/${lastNorm}.html">${lastNormGroup}</a>`;
+				lawMatch = lawMatch.replace(lastNormGroup, lastNormLinks);
+			}
+
+			const gp1 = groups.p1;
+			if(/§§+/.test(gp1)) {
+				// matches of lawRegexChain: ["", 24 II", ", 25 II"]
+				lawMatch = lawMatch.replace(lawChainRegex, (match, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22, p23, p24, groups) => {
+					const norm = groups.norm.trim();
+					const normGroup = groups.normgr.trim();
+					const normLink = `<a class="no-underline" href="${lawUrl}/${gesetz}${buch}/${norm}.html">${normGroup}</a>`;
+					match = match.replace(normGroup, normLink);
+					return match;
+				});
+			}
+
+			match = match.replace(groups.p2, lawMatch);
+			
+			return `<span style="color: #a159e4;">${match}</span>`;
+			
 		});
 	
 		fileContent = fileContent.replace(caseRegex, (match) => {
@@ -68,6 +153,6 @@ export default class ExamplePlugin extends Plugin {
 			return `<a href="${journalUrl}${encodeURIComponent(match)}">${match}</a>`;
 		});
 	
-		editor.getDoc().setValue(fileContent);
+		return fileContent;
 	}
 }
