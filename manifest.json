@@ -1,11 +1,8 @@
 {
-	"id": "law-article-highlighter",
-	"name": "Law Article Highlighter",
+	"id": "legal-reference-highlighter",
+	"name": "Legal Reference Highlighter",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
-	"description": "Highlight law articles and insert hyperlink in Obsidian",
-	"author": "Obsidian",
-	"authorUrl": "https://obsidian.md",
-	"fundingUrl": "https://obsidian.md/pricing",
+	"description": "Highlight german legal references and insert hyperlink in Obsidian",
 	"isDesktopOnly": false
 }
