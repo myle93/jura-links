@@ -1,25 +1,4 @@
-/*
-
-This CSS file will be included with your plugin, and
-available in the app when your plugin is enabled.
-
-If your plugin does not need CSS, delete this file.
-
-*/
-.law-article {
-    color: skyblue;
-}
-
-.iframe-link iframe {
-    display: none;
-}
-.iframe-link:hover iframe {
-    display: block;
-    height: calc(100vh - 30px);
-    width: 100%;
-}
-
 .no-underline:hover {
-    text-decoration: none;
-    color: #a159e4;
+	text-decoration: none;
+	color: #a159e4;
 }
