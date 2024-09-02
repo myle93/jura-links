@@ -164,7 +164,7 @@ function findAndLinkCaseReferences(fileContent: string): string {
 	const caseUrl = DejureUrl.CASE;
 
 	fileContent = fileContent.replace(caseRegex, (match) => {
-		return `<a href="${caseUrl}${encodeURIComponent(match)}">${match}</a>`;
+		return `<a class="no-underline" href="${caseUrl}${match}">${match}</a>`;
 	});
 
 	return fileContent;
@@ -180,9 +180,7 @@ function findAndLinkJournalReferences(fileContent: string): string {
 	fileContent = fileContent.replace(
 		journalRegex,
 		(match, journal, year, page) => {
-			return `<a href="${journalUrl}${encodeURIComponent(
-				match
-			)}">${match}</a>`;
+			return `<a class="no-underline" href="${journalUrl}${match}">${match}</a>`;
 		}
 	);
 

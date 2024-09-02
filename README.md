@@ -31,6 +31,7 @@ This project is an Obsidian plugin called "Obsidian Law Article Highlighter". It
 -   [x] Further refinement of the RegEx for laws to also recognize chains of laws like §§ 358 - 360 BGB. The first and last norm should be linked.
 -   [ ] Hyperlinks for each norm in a chain of paragraphs starting with "§§" or "Artt." (Example: §§ 311 II, 280 I, 241 II BGB)
 -   [ ] The RegEx for journals must also recognize official journal collections such as BGHZ 31, 242. This list is quite comprehensive, so I can provide a predefined list of such journals if it makes it easier.
--   [ ] Display text in hyperlinks for chains of paragraphs should be the same as the input, so if "§§ 311 II, [...]" is entered, "311 II" is also the display text.
+-   [x] Display text in hyperlinks for chains of paragraphs should be the same as the input, so if "§§ 311 II, [...]" is entered, "311 II" is also the display text.
 -   [x] Tests with Vitest
 -   [x] Refactor
+-   [ ] Fix findAndLinkJournalReferences and findAndLinkCaseReferences. All test cases still fail.
