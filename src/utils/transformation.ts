@@ -7,7 +7,7 @@ function findAndLinkLawReferences(fileContent: string): string {
 	}
 
 	const lawUrl = DejureUrl.LAW;
-
+	console.log("lawRegex", lawRegex);
 	fileContent = fileContent.replace(
 		lawRegex,
 		(
@@ -89,14 +89,14 @@ function findAndLinkLawReferences(fileContent: string): string {
 			let lawMatch: string = groups.p2;
 
 			// fistNorm: 23
-			const firstNormGroup = groups.normgr.trim();
-			const firstNorm = groups.norm;
+			const firstNormGroup = groups.normgr_first.trim();
+			const firstNorm = groups.norm_first;
 			const firstNormLinks = `<a class="no-underline" href="${lawUrl}/${gesetz}${buch}/${firstNorm}.html">${firstNormGroup}</a>`;
 			lawMatch = lawMatch.replace(firstNormGroup, firstNormLinks);
 
 			// lastNorm: 25
-			let lastNormGroup = groups.lnormgr;
-			let lastNorm = groups.lnorm;
+			let lastNormGroup = groups.normgr_last;
+			let lastNorm = groups.norm_last;
 			if (lastNorm && lastNormGroup) {
 				lastNormGroup = lastNormGroup.trim();
 				lastNorm = lastNorm.trim();
@@ -164,7 +164,7 @@ function findAndLinkCaseReferences(fileContent: string): string {
 	const caseUrl = DejureUrl.CASE;
 
 	fileContent = fileContent.replace(caseRegex, (match) => {
-		return `<a href="${caseUrl}${encodeURIComponent(match)}">${match}</a>`;
+		return `<a class="no-underline" href="${caseUrl}${match}">${match}</a>`;
 	});
 
 	return fileContent;
@@ -180,9 +180,7 @@ function findAndLinkJournalReferences(fileContent: string): string {
 	fileContent = fileContent.replace(
 		journalRegex,
 		(match, journal, year, page) => {
-			return `<a href="${journalUrl}${encodeURIComponent(
-				match
-			)}">${match}</a>`;
+			return `<a class="no-underline" href="${journalUrl}${match}">${match}</a>`;
 		}
 	);
 

@@ -1,10 +1,18 @@
 import { expect, test } from "vitest";
-import { findAndLinkLawReferences } from "../../src/utils/transformation";
+import {
+	findAndLinkLawReferences,
+	findAndLinkCaseReferences,
+	findAndLinkJournalReferences,
+} from "../../src/utils/transformation";
 
 test.each([
 	{
 		input: `§ 177 II Nr. 2 StGB `,
 		expected: `<span style="color: #a159e4;">§ <a class="no-underline" href="https://www.dejure.org/gesetze/stgb/177.html">177 II Nr. 2</a> StGB</span> `,
+	},
+	{
+		input: `meow meow `,
+		expected: `meow meow `,
 	},
 	{
 		input: `§ 177 II Nr. 2, 5 StGB`,
@@ -161,7 +169,126 @@ test.each([
 		input: `§§ 823 Abs. 1,  2 und 3 BGB`,
 		expected: `<span style="color: #a159e4;">§§ <a class="no-underline" href="https://www.dejure.org/gesetze/bgb/823.html">823 Abs. 1,  <a class="no-underline" href="https://www.dejure.org/gesetze/bgb/2.html">2</a> und <a class="no-underline" href="https://www.dejure.org/gesetze/bgb/3.html">3</a></a> BGB</span>`,
 	},
-])("findAndLinkLawReferences: should transform %s to %s", (testData) => {
-	const result = findAndLinkLawReferences(testData.input);
-	expect(testData.expected).toBe(result);
-});
+])(
+	"findAndLinkLawReferences: should transform $input to $expected",
+	(testData) => {
+		let result = findAndLinkLawReferences(testData.input);
+		// Run the transformation twice to ensure that the transformation is idempotent
+		result = findAndLinkLawReferences(testData.input);
+		expect(result).toBe(testData.expected);
+	}
+);
+
+test.each([
+	{
+		input: `meow meow`,
+		expected: `meow meow`,
+	},
+	{
+		input: `17 O 11/23 `,
+		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=17 O 11/23">17 O 11/23</a> `,
+	},
+	{
+		input: `2 BvR 829/24`,
+		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=2 BvR 829/24">2 BvR 829/24</a> `,
+	},
+	{
+		input: `VIII ZR 184/23`,
+		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=VIII ZR 184/23">VIII ZR 184/23</a> `,
+	},
+	{
+		input: `C-184/22`,
+		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=C-184/22">C-184/22</a> `,
+	},
+	{
+		input: `B 1 KR 28/23 R`,
+		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=B 1 KR 28/23 R">B 1 KR 28/23 R</a> `,
+	},
+	{
+		input: `2 StR 26/12`,
+		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=2 StR 26/12">2 StR 26/12</a> `,
+	},
+	{
+		input: `11 Ks 542 Js 24817/09`,
+		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=11 Ks 542 Js 24817/09">11 Ks 542 Js 24817/09</a> `,
+	},
+	{
+		input: `57292/16`,
+		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=57292/16">57292/16</a> `,
+	},
+	{
+		input: `5a F 686/10`,
+		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=5a F 686/10">5a F 686/10</a> `,
+	},
+])(
+	"findAndLinkCaseReferences: should transform $input to $expected",
+	(testData) => {
+		let result = findAndLinkCaseReferences(testData.input);
+		// Run the transformation twice to ensure that the transformation is idempotent
+		result = findAndLinkCaseReferences(testData.input);
+		expect(result).toBe(testData.expected);
+	}
+);
+
+test.each([
+	{
+		input: `meow meow`,
+		expected: `meow meow`,
+	},
+	{
+		input: `afp 2019, 555 `,
+		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=afp 2019, 555">afp 2019, 555</a> `,
+	},
+	{
+		input: `NVwZ 2022, 1561`,
+		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=NVwZ 2022, 1561">NVwZ 2022, 1561</a> `,
+	},
+	{
+		input: `NJW 2024, 2604`,
+		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=NJW 2024, 2604">NJW 2024, 2604</a> `,
+	},
+	{
+		input: `BVerwGE 175, 227`,
+		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=BVerwGE 175, 227">BVerwGE 175, 227</a> `,
+	},
+	{
+		input: `BGHZ 137, 205`,
+		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=BGHZ 137, 205">BGHZ 137, 205</a> `,
+	},
+	{
+		input: `BGHSt 40, 299`,
+		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=BGHSt 40, 299">BGHSt 40, 299</a> `,
+	},
+	{
+		input: `BFHE 251, 40`,
+		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=BFHE 251, 40">BFHE 251, 40</a> `,
+	},
+	{
+		input: `BAGE 135, 80`,
+		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=BAGE 135, 80">BAGE 135, 80</a> `,
+	},
+	{
+		input: `BVerfGE 126, 286`,
+		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=BVerfGE 126, 286">BVerfGE 126, 286</a> `,
+	},
+	{
+		input: `BSGE 123, 157`,
+		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=BSGE 123, 157">BSGE 123, 157</a> `,
+	},
+	{
+		input: `Slg. 2003, I-10239`,
+		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=Slg. 2003, I-10239">Slg. 2003, I-10239</a> `,
+	},
+	{
+		input: `Slg. 1999, II-3357`,
+		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=Slg. 1999, II-3357">Slg. 1999, II-3357</a> `,
+	},
+])(
+	"findAndLinkJournalReferences: should transform $input to $expected",
+	(testData) => {
+		let result = findAndLinkJournalReferences(testData.input);
+		// Run the transformation twice to ensure that the transformation is idempotent
+		result = findAndLinkJournalReferences(testData.input);
+		expect(result).toBe(testData.expected);
+	}
+);
