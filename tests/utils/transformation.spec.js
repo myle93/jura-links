@@ -190,35 +190,35 @@ test.each([
 	},
 	{
 		input: `2 BvR 829/24`,
-		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=2 BvR 829/24">2 BvR 829/24</a> `,
+		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=2 BvR 829/24">2 BvR 829/24</a>`,
 	},
 	{
 		input: `VIII ZR 184/23`,
-		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=VIII ZR 184/23">VIII ZR 184/23</a> `,
+		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=VIII ZR 184/23">VIII ZR 184/23</a>`,
 	},
 	{
 		input: `C-184/22`,
-		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=C-184/22">C-184/22</a> `,
+		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=C-184/22">C-184/22</a>`,
 	},
 	{
 		input: `B 1 KR 28/23 R`,
-		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=B 1 KR 28/23 R">B 1 KR 28/23 R</a> `,
+		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=B 1 KR 28/23 R">B 1 KR 28/23 R</a>`,
 	},
 	{
 		input: `2 StR 26/12`,
-		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=2 StR 26/12">2 StR 26/12</a> `,
+		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=2 StR 26/12">2 StR 26/12</a>`,
 	},
 	{
 		input: `11 Ks 542 Js 24817/09`,
-		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=11 Ks 542 Js 24817/09">11 Ks 542 Js 24817/09</a> `,
+		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=11 Ks 542 Js 24817/09">11 Ks 542 Js 24817/09</a>`,
 	},
 	{
 		input: `57292/16`,
-		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=57292/16">57292/16</a> `,
+		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=57292/16">57292/16</a>`,
 	},
 	{
 		input: `5a F 686/10`,
-		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=5a F 686/10">5a F 686/10</a> `,
+		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=5a F 686/10">5a F 686/10</a>`,
 	},
 ])(
 	"findAndLinkCaseReferences: should transform $input to $expected",
@@ -241,47 +241,47 @@ test.each([
 	},
 	{
 		input: `NVwZ 2022, 1561`,
-		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=NVwZ 2022, 1561">NVwZ 2022, 1561</a> `,
+		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=NVwZ 2022, 1561">NVwZ 2022, 1561</a>`,
 	},
 	{
 		input: `NJW 2024, 2604`,
-		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=NJW 2024, 2604">NJW 2024, 2604</a> `,
+		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=NJW 2024, 2604">NJW 2024, 2604</a>`,
 	},
 	{
 		input: `BVerwGE 175, 227`,
-		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=BVerwGE 175, 227">BVerwGE 175, 227</a> `,
+		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=BVerwGE 175, 227">BVerwGE 175, 227</a>`,
 	},
 	{
 		input: `BGHZ 137, 205`,
-		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=BGHZ 137, 205">BGHZ 137, 205</a> `,
+		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=BGHZ 137, 205">BGHZ 137, 205</a>`,
 	},
 	{
 		input: `BGHSt 40, 299`,
-		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=BGHSt 40, 299">BGHSt 40, 299</a> `,
+		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=BGHSt 40, 299">BGHSt 40, 299</a>`,
 	},
 	{
 		input: `BFHE 251, 40`,
-		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=BFHE 251, 40">BFHE 251, 40</a> `,
+		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=BFHE 251, 40">BFHE 251, 40</a>`,
 	},
 	{
 		input: `BAGE 135, 80`,
-		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=BAGE 135, 80">BAGE 135, 80</a> `,
+		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=BAGE 135, 80">BAGE 135, 80</a>`,
 	},
 	{
 		input: `BVerfGE 126, 286`,
-		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=BVerfGE 126, 286">BVerfGE 126, 286</a> `,
+		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=BVerfGE 126, 286">BVerfGE 126, 286</a>`,
 	},
 	{
 		input: `BSGE 123, 157`,
-		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=BSGE 123, 157">BSGE 123, 157</a> `,
+		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=BSGE 123, 157">BSGE 123, 157</a>`,
 	},
 	{
 		input: `Slg. 2003, I-10239`,
-		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=Slg. 2003, I-10239">Slg. 2003, I-10239</a> `,
+		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=Slg. 2003, I-10239">Slg. 2003, I-10239</a>`,
 	},
 	{
 		input: `Slg. 1999, II-3357`,
-		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=Slg. 1999, II-3357">Slg. 1999, II-3357</a> `,
+		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=Slg. 1999, II-3357">Slg. 1999, II-3357</a>`,
 	},
 ])(
 	"findAndLinkJournalReferences: should transform $input to $expected",

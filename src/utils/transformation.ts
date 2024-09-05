@@ -7,7 +7,6 @@ function findAndLinkLawReferences(fileContent: string): string {
 	}
 
 	const lawUrl = DejureUrl.LAW;
-	console.log("lawRegex", lawRegex);
 	fileContent = fileContent.replace(
 		lawRegex,
 		(
