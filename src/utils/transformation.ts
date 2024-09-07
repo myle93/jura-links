@@ -60,7 +60,6 @@ function findAndLinkLawReferences(fileContent: string): string {
 			p47,
 			p48,
 			p49,
-			p50,
 			groups
 		) => {
 			// Transform law name for the URL
@@ -71,13 +70,6 @@ function findAndLinkLawReferences(fileContent: string): string {
 				.replace(/ü/g, "ue")
 				.replace(/ß/g, "ss")
 				.trim();
-
-			// Transform book name for the URL
-			const buch = groups.buch ? `_${groups.buch.toUpperCase()}` : "";
-
-			if (gesetz.includes("sgb")) {
-				gesetz = "sgb";
-			}
 
 			if (gesetz === "bruessel-ia-vo") {
 				gesetz = "eugvvo";
@@ -90,7 +82,7 @@ function findAndLinkLawReferences(fileContent: string): string {
 			// fistNorm: 23
 			const firstNormGroup = groups.normgr_first.trim();
 			const firstNorm = groups.norm_first;
-			const firstNormLinks = `<a class="no-underline" href="${lawUrl}/${gesetz}${buch}/${firstNorm}.html">${firstNormGroup}</a>`;
+			const firstNormLinks = `<a class="no-underline" href="${lawUrl}/${gesetz}/${firstNorm}.html">${firstNormGroup}</a>`;
 			lawMatch = lawMatch.replace(firstNormGroup, firstNormLinks);
 
 			// lastNorm: 25
@@ -99,7 +91,7 @@ function findAndLinkLawReferences(fileContent: string): string {
 			if (lastNorm && lastNormGroup) {
 				lastNormGroup = lastNormGroup.trim();
 				lastNorm = lastNorm.trim();
-				const lastNormLinks = `<a class="no-underline" href="${lawUrl}/${gesetz}${buch}/${lastNorm}.html">${lastNormGroup}</a>`;
+				const lastNormLinks = `<a class="no-underline" href="${lawUrl}/${gesetz}/${lastNorm}.html">${lastNormGroup}</a>`;
 				lawMatch = lawMatch.replace(lastNormGroup, lastNormLinks);
 			}
 
@@ -139,7 +131,7 @@ function findAndLinkLawReferences(fileContent: string): string {
 					) => {
 						const norm = groups.norm.trim();
 						const normGroup = groups.normgr.trim();
-						const normLink = `<a class="no-underline" href="${lawUrl}/${gesetz}${buch}/${norm}.html">${normGroup}</a>`;
+						const normLink = `<a class="no-underline" href="${lawUrl}/${gesetz}/${norm}.html">${normGroup}</a>`;
 						match = match.replace(normGroup, normLink);
 						return match;
 					}

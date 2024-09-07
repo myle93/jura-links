@@ -15,6 +15,26 @@ test.each([
 		expected: `meow meow `,
 	},
 	{
+		input: `§ 1 KAGB `,
+		expected: `<span style="color: #a159e4;">§ <a class="no-underline" href="https://www.dejure.org/gesetze/kagb/1.html">1</a> KAGB</span> `,
+	},
+	{
+		input: `§ 1 KAG `,
+		expected: `<span style="color: #a159e4;">§ <a class="no-underline" href="https://www.dejure.org/gesetze/kag/1.html">1</a> KAG</span> `,
+	},
+	{
+		input: `§ 1 VVG-InfoV `,
+		expected: `<span style="color: #a159e4;">§ <a class="no-underline" href="https://www.dejure.org/gesetze/vvg-infov/1.html">1</a> VVG-InfoV</span> `,
+	},
+	{
+		input: `§ 1 VVG `,
+		expected: `<span style="color: #a159e4;">§ <a class="no-underline" href="https://www.dejure.org/gesetze/vvg/1.html">1</a> VVG</span> `,
+	},
+	{
+		input: `§ 1 VVG a.F. `,
+		expected: `<span style="color: #a159e4;">§ <a class="no-underline" href="https://www.dejure.org/gesetze/vvg a.f./1.html">1</a> VVG a.F.</span> `,
+	},
+	{
 		input: `§ 177 II Nr. 2, 5 StGB`,
 		expected: `<span style="color: #a159e4;">§ <a class="no-underline" href="https://www.dejure.org/gesetze/stgb/177.html">177 II Nr. 2, 5</a> StGB</span>`,
 	},
@@ -82,7 +102,11 @@ test.each([
 	},
 	{
 		input: `§§ 242, 243 SGB I`,
-		expected: `<span style="color: #a159e4;">§§ <a class="no-underline" href="https://www.dejure.org/gesetze/sgb_I/242.html">242</a>, <a class="no-underline" href="https://www.dejure.org/gesetze/sgb_I/243.html">243</a> SGB I</span>`,
+		expected: `<span style="color: #a159e4;">§§ <a class="no-underline" href="https://www.dejure.org/gesetze/sgb i/242.html">242</a>, <a class="no-underline" href="https://www.dejure.org/gesetze/sgb i/243.html">243</a> SGB I</span>`,
+	},
+	{
+		input: `§§ 242, 243 JVollzGB I`,
+		expected: `<span style="color: #a159e4;">§§ <a class="no-underline" href="https://www.dejure.org/gesetze/jvollzgb i/242.html">242</a>, <a class="no-underline" href="https://www.dejure.org/gesetze/jvollzgb i/243.html">243</a> JVollzGB I</span>`,
 	},
 	{ input: `§§ 242, 243 SGB`, expected: `§§ 242, 243 SGB` },
 	{
