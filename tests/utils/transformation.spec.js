@@ -11,6 +11,38 @@ test.each([
 		expected: `<span style="color: #a159e4;">§ <a class="no-underline" href="https://www.dejure.org/gesetze/stgb/177.html">177 II Nr. 2</a> StGB</span> `,
 	},
 	{
+		input: `§ 1 AGBGB`,
+		expected: `<span style="color: #a159e4;">§ <a class="no-underline" href="https://www.dejure.org/gesetze/agbgb/1.html">1</a> AGBGB</span>`,
+	},
+	{
+		input: `§ 1 AGBG`,
+		expected: `<span style="color: #a159e4;">§ <a class="no-underline" href="https://www.dejure.org/gesetze/agbg/1.html">1</a> AGBG</span>`,
+	},
+	{
+		input: `§ 1 AGBGB Schl.-H. SH`,
+		expected: `<span style="color: #a159e4;">§ <a class="no-underline" href="https://www.dejure.org/gesetze/agbgb schl.-h. sh/1.html">1</a> AGBGB Schl.-H. SH</span>`,
+	},
+	{
+		input: `§ 1 AGVwGO BE`,
+		expected: `<span style="color: #a159e4;">§ <a class="no-underline" href="https://www.dejure.org/gesetze/agvwgo be/1.html">1</a> AGVwGO BE</span>`,
+	},
+	{
+		input: `§ 1 AO`,
+		expected: `<span style="color: #a159e4;">§ <a class="no-underline" href="https://www.dejure.org/gesetze/ao/1.html">1</a> AO</span>`,
+	},
+	{
+		input: `§ 1 AO-GS NW`,
+		expected: `<span style="color: #a159e4;">§ <a class="no-underline" href="https://www.dejure.org/gesetze/ao-gs nw/1.html">1</a> AO-GS NW</span>`,
+	},
+	{
+		input: `§ 1 BBesGÜB 2018/19/20`,
+		expected: `<span style="color: #a159e4;">§ <a class="no-underline" href="https://www.dejure.org/gesetze/bbesgueb 2018/19/20/1.html">1</a> BBesGÜB 2018/19/20</span>`,
+	},
+	{
+		input: `§ 1 BGBAG HH`,
+		expected: `<span style="color: #a159e4;">§ <a class="no-underline" href="https://www.dejure.org/gesetze/bgbag hh/1.html">1</a> BGBAG HH</span>`,
+	},
+	{
 		input: `meow meow `,
 		expected: `meow meow `,
 	},
@@ -103,6 +135,10 @@ test.each([
 	{
 		input: `§§ 242, 243 SGB I`,
 		expected: `<span style="color: #a159e4;">§§ <a class="no-underline" href="https://www.dejure.org/gesetze/sgb i/242.html">242</a>, <a class="no-underline" href="https://www.dejure.org/gesetze/sgb i/243.html">243</a> SGB I</span>`,
+	},
+	{
+		input: `§ 1 SG`,
+		expected: `<span style="color: #a159e4;">§ <a class="no-underline" href="https://www.dejure.org/gesetze/sg/1.html">1</a> SG</span>`,
 	},
 	{
 		input: `§§ 242, 243 JVollzGB I`,

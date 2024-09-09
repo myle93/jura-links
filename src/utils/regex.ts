@@ -1,14 +1,6 @@
-import { dejureLawList } from "../static/dejureLaws";
-import { nonDejureLawList } from "../static/nonDejureLaws";
+import { laws } from "../static/laws";
 
-// The list of non dejure laws are laws from buzer, lexsoft and rewis, which are not available in dejure.org.
-// Unlike the dejure laws, these laws are not edited yet, so for e.g. if there are laws with same prefix,
-// only the shortest one will be matched. For e.g. if there are two laws "BGB" and "BGB a.F.", only "BGB" will be matched.
-// Due to this problem, the law "SG" is currently commented out in the nonDejureLawList, so that the laws "SGB I" and so on can be matched.
-// White spaces should be escaped with "\\s*", which has not been done in the nonDejureLawList yet.
-const nonDejureLaws = nonDejureLawList.join("|");
-const dejureLaws = dejureLawList.join("|");
-const lawList = `${dejureLaws}|${nonDejureLaws}`;
+const lawList = laws.join("|");
 
 function getSingleLawRegexString(suffix: string): string {
 	return `(?<normgr${suffix}>(?<norm${suffix}>\\d+(?:\\w\\b)?)\\s*(?:(Abs\\.|Absatz)\\s*(?<absatz${suffix}>\\d+(?:\\s*(,|-|und)\\s*\\d+)*)|(?<absatzrom${suffix}>[IVXLCDM]+(?:\\s*(,|-|und)\\s*[IVXLCDM]+)*))?\\s*(?:(S\\.|Satz)?\\s*(?<satz${suffix}>\\d+(?:\\s*(,|-|und)\\s*\\d+)*))?\\s*(?:(Alt\\.|Alternativ)\\s*(?<alternative${suffix}>\\d+(?:\\s*(,|-|und)\\s*\\d+)*))?\\s*(?:(Var\\.|Variante)\\s*(?<variante${suffix}>\\d+(?:\\s*(,|-|und)\\s*\\d+)*))?\\s*(?:(Nr\\.|Nummer)\\s*(?<nr${suffix}>\\d+(?:\\w\\b)?(?:\\s*(,|-|und)\\s*\\d+(?:\\w\\b)?)*))?\\s*(?:(lit\\.|Buchstabe)\\s*(?<lit${suffix}>[a-z][a-z-]*[a-z]?))?.{0,10}?)`;
@@ -19,7 +11,7 @@ export const lawRegex = new RegExp(
 		"_first"
 	)}(?:\\s*(,|-|und)\\s*${getSingleLawRegexString(
 		"_last"
-	)})*)(?<gesetz>${lawList})`,
+	)})*)(?<gesetz>\\b${lawList}\\b)`,
 	"gm"
 );
 export const lawChainRegex = new RegExp(
