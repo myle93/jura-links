@@ -4,6 +4,7 @@ import { DejureUrl } from "../types/url";
 
 function getDejureUrl(gesetz: string, norm: string): string {
 	const lawUrl = DejureUrl.LAW;
+	gesetz = gesetz.toLowerCase();
 	if (dejureGesetze.indexOf(gesetz) !== -1) {
 		return `${lawUrl}/${gesetz}/${norm}.html`;
 	} else {

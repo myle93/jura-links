@@ -1,6 +1,6 @@
-import { laws } from "../static/laws";
+import { AllLawAbbrs } from "../static/lawsAbbrs";
 
-const lawList = laws.join("|");
+const lawList = AllLawAbbrs.join("|");
 
 function getSingleLawRegexString(suffix: string): string {
 	return `(?<normgr${suffix}>(?<norm${suffix}>\\d+(?:\\w\\b)?)\\s*(?:(Abs\\.|Absatz)\\s*(?<absatz${suffix}>\\d+(?:\\s*(,|-|und)\\s*\\d+)*)|(?<absatzrom${suffix}>[IVXLCDM]+(?:\\s*(,|-|und)\\s*[IVXLCDM]+)*))?\\s*(?:(S\\.|Satz)?\\s*(?<satz${suffix}>\\d+(?:\\s*(,|-|und)\\s*\\d+)*))?\\s*(?:(Alt\\.|Alternativ)\\s*(?<alternative${suffix}>\\d+(?:\\s*(,|-|und)\\s*\\d+)*))?\\s*(?:(Var\\.|Variante)\\s*(?<variante${suffix}>\\d+(?:\\s*(,|-|und)\\s*\\d+)*))?\\s*(?:(Nr\\.|Nummer)\\s*(?<nr${suffix}>\\d+(?:\\w\\b)?(?:\\s*(,|-|und)\\s*\\d+(?:\\w\\b)?)*))?\\s*(?:(lit\\.|Buchstabe)\\s*(?<lit${suffix}>[a-z][a-z-]*[a-z]?))?.{0,10}?)`;

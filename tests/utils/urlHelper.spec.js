@@ -3,13 +3,13 @@ import { getLawUrlByProvider } from "../../src/utils/urlHelper";
 
 test.each([
 	{
-		gesetz: `StGB`,
+		gesetz: `stgb`,
 		norm: `242`,
 		provider: `dejure`,
-		expected: `https://www.dejure.org/gesetze/StGB/242.html`,
+		expected: `https://www.dejure.org/gesetze/stgb/242.html`,
 	},
 ])(
-	"getLawUrlByProvider: should returns $expected given provider $provider, $gesetz, $norm and $normGroup",
+	"getLawUrlByProvider: should returns $expected given provider $provider, $gesetz, $norm",
 	(testData) => {
 		const result = getLawUrlByProvider(
 			testData.gesetz,

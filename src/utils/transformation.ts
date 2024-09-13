@@ -74,10 +74,10 @@ function findAndLinkLawReferences(
 			groups
 		) => {
 			// Transform law name for the URL
-			let gesetz = groups.gesetz.trim();
+			let gesetz = groups.gesetz.trim().toLocaleLowerCase();
 
-			if (gesetz === "Brüssel-Ia-VO") {
-				gesetz = "EUGVVO";
+			if (gesetz === "brüssel-ia-vo") {
+				gesetz = "EuGVVO";
 			}
 
 			// e. g. match: §§ 23 I, II, 24 II, 25 II BGB
