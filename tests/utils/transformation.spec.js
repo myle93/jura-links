@@ -343,6 +343,10 @@ test.each([
 		input: `Slg. 1999, II-3357`,
 		expected: `<a class="no-underline" href="https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=Slg. 1999, II-3357">Slg. 1999, II-3357</a>`,
 	},
+	{
+		input: `§§ 280, 328 Nr. 2, 258, 57 BGB`,
+		expected: `§§ 280, 328 Nr. 2, 258, 57 BGB`,
+	},
 ])(
 	"findAndLinkJournalReferences: should transform $input to $expected",
 	(testData) => {
