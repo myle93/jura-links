@@ -63,16 +63,10 @@ function findAndLinkLawReferences(fileContent: string): string {
 			groups
 		) => {
 			// Transform law name for the URL
-			let gesetz = groups.gesetz
-				.toLowerCase()
-				.replace(/ä/g, "ae")
-				.replace(/ö/g, "oe")
-				.replace(/ü/g, "ue")
-				.replace(/ß/g, "ss")
-				.trim();
+			let gesetz = groups.gesetz.trim();
 
-			if (gesetz === "bruessel-ia-vo") {
-				gesetz = "eugvvo";
+			if (gesetz === "Brüssel-Ia-VO") {
+				gesetz = "EUGVVO";
 			}
 
 			// e. g. match: §§ 23 I, II, 24 II, 25 II BGB
@@ -82,7 +76,7 @@ function findAndLinkLawReferences(fileContent: string): string {
 			// fistNorm: 23
 			const firstNormGroup = groups.normgr_first.trim();
 			const firstNorm = groups.norm_first;
-			const firstNormLinks = `<a class="no-underline" href="${lawUrl}/${gesetz}/${firstNorm}.html">${firstNormGroup}</a>`;
+			const firstNormLinks = `<a href="${lawUrl}/${gesetz}/${firstNorm}.html">${firstNormGroup}</a>`;
 			lawMatch = lawMatch.replace(firstNormGroup, firstNormLinks);
 
 			// lastNorm: 25
@@ -91,7 +85,7 @@ function findAndLinkLawReferences(fileContent: string): string {
 			if (lastNorm && lastNormGroup) {
 				lastNormGroup = lastNormGroup.trim();
 				lastNorm = lastNorm.trim();
-				const lastNormLinks = `<a class="no-underline" href="${lawUrl}/${gesetz}/${lastNorm}.html">${lastNormGroup}</a>`;
+				const lastNormLinks = `<a href="${lawUrl}/${gesetz}/${lastNorm}.html">${lastNormGroup}</a>`;
 				lawMatch = lawMatch.replace(lastNormGroup, lastNormLinks);
 			}
 
@@ -131,7 +125,7 @@ function findAndLinkLawReferences(fileContent: string): string {
 					) => {
 						const norm = groups.norm.trim();
 						const normGroup = groups.normgr.trim();
-						const normLink = `<a class="no-underline" href="${lawUrl}/${gesetz}/${norm}.html">${normGroup}</a>`;
+						const normLink = `<a href="${lawUrl}/${gesetz}/${norm}.html">${normGroup}</a>`;
 						match = match.replace(normGroup, normLink);
 						return match;
 					}
@@ -140,7 +134,7 @@ function findAndLinkLawReferences(fileContent: string): string {
 
 			match = match.replace(groups.p2, lawMatch);
 
-			return `<span style="color: #a159e4;">${match}</span>`;
+			return match;
 		}
 	);
 
@@ -155,7 +149,7 @@ function findAndLinkCaseReferences(fileContent: string): string {
 	const caseUrl = DejureUrl.CASE;
 
 	fileContent = fileContent.replace(caseRegex, (match) => {
-		return `<a class="no-underline" href="${caseUrl}${match}">${match}</a>`;
+		return `<a href="${caseUrl}${match}">${match}</a>`;
 	});
 
 	return fileContent;
@@ -171,11 +165,29 @@ function findAndLinkJournalReferences(fileContent: string): string {
 	fileContent = fileContent.replace(
 		journalRegex,
 		(match, journal, year, page) => {
-			return `<a class="no-underline" href="${journalUrl}${match}">${match}</a>`;
+			return `<a href="${journalUrl}${match}">${match}</a>`;
 		}
 	);
 
 	return fileContent;
+}
+
+function tmp() {
+	const fileContent = {
+		a: 1,
+		b: 2,
+		c: 3,
+		d: 4,
+	};
+	const key = "a";
+
+	if (key in fileContent) {
+		// Key is present in fileContent
+		console.log("Key is present");
+	} else {
+		// Key is not present in fileContent
+		console.log("Key is not present");
+	}
 }
 
 export {
