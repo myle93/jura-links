@@ -1,7 +1,18 @@
-import { DejureUrl } from "../static/lawProvider";
+import { DejureUrl } from "../types/url";
+import { LawProviderOptions } from "../types/providerOption";
 import { caseRegex, journalRegex, lawChainRegex, lawRegex } from "./regex";
+import { getLawUrlByProviderOptions } from "./urlHelper";
 
-function findAndLinkLawReferences(fileContent: string): string {
+function findAndLinkLawReferences(
+	fileContent: string,
+	lawProviderOptions: LawProviderOptions = {
+		firstOption: "dejure",
+		secondOption: null,
+		thirdOption: null,
+		forthOption: null,
+		fifthOption: null,
+	}
+): string {
 	if (!lawRegex.test(fileContent)) {
 		return fileContent;
 	}
@@ -76,8 +87,13 @@ function findAndLinkLawReferences(fileContent: string): string {
 			// fistNorm: 23
 			const firstNormGroup = groups.normgr_first.trim();
 			const firstNorm = groups.norm_first;
-			const firstNormLinks = `<a href="${lawUrl}/${gesetz}/${firstNorm}.html">${firstNormGroup}</a>`;
-			lawMatch = lawMatch.replace(firstNormGroup, firstNormLinks);
+			const firstNormLink = getHyperlinkForLawIfExists(
+				firstNormGroup,
+				gesetz,
+				firstNorm,
+				lawProviderOptions
+			);
+			lawMatch = lawMatch.replace(firstNormGroup, firstNormLink);
 
 			// lastNorm: 25
 			let lastNormGroup = groups.normgr_last;
@@ -85,8 +101,13 @@ function findAndLinkLawReferences(fileContent: string): string {
 			if (lastNorm && lastNormGroup) {
 				lastNormGroup = lastNormGroup.trim();
 				lastNorm = lastNorm.trim();
-				const lastNormLinks = `<a href="${lawUrl}/${gesetz}/${lastNorm}.html">${lastNormGroup}</a>`;
-				lawMatch = lawMatch.replace(lastNormGroup, lastNormLinks);
+				const lastNormLink = getHyperlinkForLawIfExists(
+					lastNormGroup,
+					gesetz,
+					lastNorm,
+					lawProviderOptions
+				);
+				lawMatch = lawMatch.replace(lastNormGroup, lastNormLink);
 			}
 
 			// If the match is a chain of laws, search and link for further laws
@@ -125,7 +146,12 @@ function findAndLinkLawReferences(fileContent: string): string {
 					) => {
 						const norm = groups.norm.trim();
 						const normGroup = groups.normgr.trim();
-						const normLink = `<a href="${lawUrl}/${gesetz}/${norm}.html">${normGroup}</a>`;
+						const normLink = getHyperlinkForLawIfExists(
+							normGroup,
+							gesetz,
+							norm,
+							lawProviderOptions
+						);
 						match = match.replace(normGroup, normLink);
 						return match;
 					}
@@ -172,22 +198,17 @@ function findAndLinkJournalReferences(fileContent: string): string {
 	return fileContent;
 }
 
-function tmp() {
-	const fileContent = {
-		a: 1,
-		b: 2,
-		c: 3,
-		d: 4,
-	};
-	const key = "a";
-
-	if (key in fileContent) {
-		// Key is present in fileContent
-		console.log("Key is present");
-	} else {
-		// Key is not present in fileContent
-		console.log("Key is not present");
+function getHyperlinkForLawIfExists(
+	normGroup: string,
+	gesetz: string,
+	norm: string,
+	lawProviderOptions: LawProviderOptions
+): string {
+	const lawUrl = getLawUrlByProviderOptions(gesetz, norm, lawProviderOptions);
+	if (lawUrl) {
+		return `<a href="${lawUrl}">${normGroup.trim()}</a>`;
 	}
+	return normGroup;
 }
 
 export {
