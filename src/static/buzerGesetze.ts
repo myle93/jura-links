@@ -1,4 +1,10 @@
-export const buzerGesetze = {
+interface BuzerGesetze {
+	[key: string]: {
+		[key: string]: string;
+	};
+}
+
+export const buzerGesetze: BuzerGesetze = {
 	gg: {
 		"1": "1_GG.htm",
 		"2": "2_GG.htm",

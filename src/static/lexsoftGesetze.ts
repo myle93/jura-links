@@ -1,4 +1,12 @@
-export const lexsoftGesetze = {
+interface LexsoftGesetze {
+	[key: string]: {
+		[key: string]: {
+			[key: string]: string;
+		};
+	};
+}
+
+export const lexsoftGesetze: LexsoftGesetze = {
 	"Baden-W\u00fcrttemberg": {
 		"arbgg bw": {
 			"1": "173644,2",

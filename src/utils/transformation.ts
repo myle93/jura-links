@@ -7,10 +7,10 @@ function findAndLinkLawReferences(
 	fileContent: string,
 	lawProviderOptions: LawProviderOptions = {
 		firstOption: "dejure",
-		secondOption: null,
-		thirdOption: null,
-		forthOption: null,
-		fifthOption: null,
+		secondOption: "lexsoft",
+		thirdOption: "lexmea",
+		forthOption: "buzer",
+		fifthOption: "rewis",
 	}
 ): string {
 	if (!lawRegex.test(fileContent)) {
