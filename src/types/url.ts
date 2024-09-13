@@ -1,7 +1,8 @@
 enum LawProviderUrl {
 	DEJURE = "https://www.dejure.org/",
 	REWIS = "https://rewis.io/",
-	LEXSOFT = "https://www.lexsoft.de/cgi-bin/lexsoft/justizportal_nrw.cgi?",
+	LEXSOFT = "https://www.lexsoft.de/cgi-bin/lexsoft/justizportal_nrw.cgi?xid=",
+	LEXMEA = "https://lexmea.de/gesetz/",
 }
 
 enum DejureUrl {

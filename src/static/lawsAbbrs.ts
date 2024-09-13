@@ -1,4 +1,4 @@
-export const laws = [
+export const AllLawAbbrs = [
 	"\\bPfändungsfreigrenzenbekanntmachung 2023\\b",
 	"\\bZustVO des Ministeriums für Verkehr NW\\b",
 	"\\bEStGemAntVO 2024  2025 und 2026 NW\\b",
