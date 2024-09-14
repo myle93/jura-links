@@ -133,7 +133,7 @@ export class SearchTabView extends ItemView {
                     // Gesetze unter dem Anbieter auflisten
                     laws.forEach(law => {
                         if (this.resultsContainer) {
-                            this.resultsContainer.createEl('div', { text: law, cls: 'law-item' });
+                            this.resultsContainer.createEl('div', { text: law, cls: 'gesetz-item' });
                         }
                     });
                 }
@@ -142,6 +142,9 @@ export class SearchTabView extends ItemView {
             if (this.resultsContainer) {
                 this.resultsContainer.createEl('div', { text: 'Keine Gesetze gefunden.' });
             }
+        }
+        if (this.resultsContainer) {
+            this.resultsContainer.createEl('div', { cls: 'bottom-spacer' });
         }
     }
 
@@ -165,6 +168,7 @@ export class SearchTabView extends ItemView {
                 scrollContainer.createEl('div', { text: abbreviation });
             });
         }
+        scrollContainer.createEl('div', { cls: 'bottom-spacer' });
     }
 
     createAnbieterFilter(dropdown: DropdownComponent): void {
@@ -219,6 +223,7 @@ export class SearchTabView extends ItemView {
                 scrollContainer.createEl('div', { text: law });
             });
         }
+        scrollContainer.createEl('div', { cls: 'bottom-spacer' });
     }
 
     extractLexsoftLaws(): string[] {
