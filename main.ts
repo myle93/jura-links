@@ -1,11 +1,13 @@
-import { Editor, Plugin } from "obsidian";
+import { Editor, Plugin, WorkspaceLeaf } from "obsidian";
 import {
-  findAndLinkCaseReferences,
-  findAndLinkJournalReferences,
-  findAndLinkLawReferences,
+	findAndLinkCaseReferences,
+	findAndLinkJournalReferences,
+	findAndLinkLawReferences,
 } from "./src/utils/transformation";
 import { LawProviderSettings, DEFAULT_SETTINGS, LawProviderSettingTab } from "./src/utils/settings";
 import { LawProviderOption } from "./src/types/providerOption";
+import { SearchTab, SearchTabView, VIEW_TYPE_SEARCH_TAB } from "./src/utils/searchTab";
+  
 
 // Aktualisieren Sie die LawProviderOptions-Schnittstelle
 interface LawProviderOptions {
@@ -17,27 +19,41 @@ interface LawProviderOptions {
 }
 
 export default class ExamplePlugin extends Plugin {
-  settings!: LawProviderSettings;
+	settings!: LawProviderSettings;
+	searchTab!: SearchTab;
+	searchLeaf: WorkspaceLeaf | null = null;
+  
+	async onload() {
+	  await this.loadSettings();
+  
+	  this.searchTab = new SearchTab(this);
+	  this.addSettingTab(new LawProviderSettingTab(this.app, this));
+  
+	  this.registerView(
+		VIEW_TYPE_SEARCH_TAB,
+		(leaf) => new SearchTabView(leaf)
+	  );
+  
+	 this.initSearchTab(); 
 
-  async onload() {
-    await this.loadSettings();
-
-    this.app.workspace.on("active-leaf-change", () => {
-      this.readActiveFileAndLinkLegalArticles();
-    });
-
-    this.addCommand({
-      id: "apply",
-      name: "apply",
-      editorCallback: (editor: Editor) => {
-        const content = editor.getDoc().getValue();
-        const newContent = this.findAndLinkLegalReferences(content);
-        editor.setValue(newContent);
-      },
-    });
-
-    this.addSettingTab(new LawProviderSettingTab(this.app, this));
-  }
+	  this.addRibbonIcon('scale', 'Gesetzes-Suche', () => {
+		this.searchTab.activateView();
+	  });
+  
+	  this.app.workspace.on("active-leaf-change", () => {
+		this.readActiveFileAndLinkLegalArticles();
+	  });
+  
+	  this.addCommand({
+		id: "apply",
+		name: "apply",
+		editorCallback: (editor: Editor) => {
+		  const content = editor.getDoc().getValue();
+		  const newContent = this.findAndLinkLegalReferences(content);
+		  editor.setValue(newContent);
+		},
+	  });
+	}
 
   onunload() {
     console.log("unloading plugin");
@@ -49,6 +65,27 @@ export default class ExamplePlugin extends Plugin {
 
   async saveSettings() {
     await this.saveData(this.settings);
+  }
+
+  async initSearchTab() {
+    if (this.app.workspace.getLeavesOfType(VIEW_TYPE_SEARCH_TAB).length) {
+      return;
+    }
+    this.searchLeaf = this.app.workspace.getRightLeaf(false);
+    if (this.searchLeaf) {
+      await this.searchLeaf.setViewState({
+        type: VIEW_TYPE_SEARCH_TAB,
+        active: true,
+      });
+    }
+  }
+
+  activateSearchTab() {
+    if (this.searchLeaf) {
+      this.app.workspace.revealLeaf(this.searchLeaf);
+    } else {
+      this.initSearchTab();
+    }
   }
 
   private async readActiveFileAndLinkLegalArticles() {
