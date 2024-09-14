@@ -232,7 +232,13 @@ test.each([
 ])(
 	"findAndLinkLawReferences: should transform $input to $expected",
 	(testData) => {
-		let result = findAndLinkLawReferences(testData.input);
+		let result = findAndLinkLawReferences(testData.input, {
+			firstOption: "dejure",
+			secondOption: "lexsoft",
+			thirdOption: "lexmea",
+			forthOption: "buzer",
+			fifthOption: "rewis",
+		});
 		// Run the transformation twice to ensure that the transformation is idempotent
 		result = findAndLinkLawReferences(testData.input);
 		expect(result).toBe(testData.expected);
