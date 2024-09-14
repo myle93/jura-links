@@ -17,7 +17,6 @@ function findAndLinkLawReferences(
 		return fileContent;
 	}
 
-	const lawUrl = DejureUrl.LAW;
 	fileContent = fileContent.replace(
 		lawRegex,
 		(
@@ -77,7 +76,7 @@ function findAndLinkLawReferences(
 			let gesetz = groups.gesetz.trim().toLocaleLowerCase();
 
 			if (gesetz === "brüssel-ia-vo") {
-				gesetz = "EuGVVO";
+				gesetz = "eugvvo";
 			}
 
 			// e. g. match: §§ 23 I, II, 24 II, 25 II BGB
@@ -198,6 +197,10 @@ function findAndLinkJournalReferences(fileContent: string): string {
 	return fileContent;
 }
 
+/*
+Get hyperlink for the given @gesetz and @norm if the law is provided by one of the give @lawProviderOptions.
+Else return the @normGroup.
+*/
 function getHyperlinkForLawIfExists(
 	normGroup: string,
 	gesetz: string,

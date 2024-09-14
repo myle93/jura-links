@@ -58,7 +58,6 @@ function getRewisUrl(gesetz: string, norm: string): string {
 			.replace(/ä/g, "o");
 		return `${lawUrl}${gesetz}/p/${norm}-${gesetz}`;
 	}
-	console.log("rewis", "not found", gesetz, norm);
 	return "";
 }
 
