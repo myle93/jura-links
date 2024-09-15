@@ -236,3 +236,7 @@ export const rewisGesetze = {
 	ZPOEG: { title: "https://rewis.io/gesetze/zpoeg/" },
 	ZVG: { title: "https://rewis.io/gesetze/zvg/" },
 };
+
+export const rewisGesetzeLowerCased = Object.keys(rewisGesetze).map((key) =>
+	key.toLowerCase()
+);

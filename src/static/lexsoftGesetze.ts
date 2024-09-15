@@ -93930,3 +93930,8 @@ export const lexsoftGesetze: LexsoftGesetze = {
 		},
 	},
 };
+
+export const lexsoftGesetzeLowerCased: LexsoftGesetze = Object.fromEntries(
+	Object.entries(lexsoftGesetze).map(([k, v]) => 
+		[k, Object.fromEntries(Object.entries(v).map(([vk, vv]) => [vk.toLowerCase(), vv]))])
+);

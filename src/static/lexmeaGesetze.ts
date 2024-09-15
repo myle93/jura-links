@@ -743,3 +743,7 @@ export const lexmeaGesetze = {
 	VwVG: { title: "Verwaltungs-Vollstreckungsgesetz" },
 	VwZG: { title: "Verwaltungszustellungsgesetz" },
 };
+
+export const lexmeaGesetzeLowerCased = Object.keys(lexmeaGesetze).map((key) =>
+	key.toLowerCase()
+);

@@ -602,3 +602,7 @@ export const dejureGesetze = {
 	},
 	ZwVwV: { title: "Zwangsverwalterverordnung" },
 };
+
+export const dejureGesetzeLowerCased = Object.keys(dejureGesetze).map((key) =>
+	key.toLowerCase()
+);

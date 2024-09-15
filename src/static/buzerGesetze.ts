@@ -110223,3 +110223,7 @@ export const buzerGesetze: BuzerGesetze = {
 		},
 	},
 };
+
+export const buzerGesetzeLowerCased: BuzerGesetze = Object.fromEntries(
+	Object.entries(buzerGesetze).map(([k, v]) => [k.toLowerCase(), v])
+);
