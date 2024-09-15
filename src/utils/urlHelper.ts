@@ -56,7 +56,7 @@ function getRewisUrl(gesetz: string, norm: string): string {
 			.replace(/ü/g, "u")
 			.replace(/ä/g, "a")
 			.replace(/ä/g, "o");
-		return `${lawUrl}${gesetz}/p/${norm}-${gesetz}`;
+		return `${lawUrl}${gesetz}/p/${gesetz}%2D${norm}`;
 	}
 	return "";
 }
@@ -90,13 +90,18 @@ function getLawUrlByProviderOptions(
 	lawProviders: LawProviderOptions
 ): string {
 	let lawUrl = getLawUrlByProvider(gesetz, norm, lawProviders.firstOption);
-
+	console.log("getLawUrlByProviderOptions", lawUrl, lawProviders.firstOption);
 	if (lawUrl) {
 		return lawUrl;
 	}
 
 	if (lawProviders.secondOption) {
 		lawUrl = getLawUrlByProvider(gesetz, norm, lawProviders.secondOption);
+		console.log(
+			"getLawUrlByProviderOptions",
+			lawUrl,
+			lawProviders.secondOption
+		);
 		if (lawUrl) {
 			return lawUrl;
 		}
@@ -104,6 +109,11 @@ function getLawUrlByProviderOptions(
 
 	if (lawProviders.thirdOption) {
 		lawUrl = getLawUrlByProvider(gesetz, norm, lawProviders.thirdOption);
+		console.log(
+			"getLawUrlByProviderOptions",
+			lawUrl,
+			lawProviders.thirdOption
+		);
 		if (lawUrl) {
 			return lawUrl;
 		}
