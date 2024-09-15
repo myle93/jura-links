@@ -4,6 +4,7 @@ import { LawProviderOption } from '../types/providerOption';
 
 export interface LawProviderSettings {
     lawProviderOptions: {
+        firstOption: LawProviderOption;
         secondOption: LawProviderOption;
         thirdOption: LawProviderOption;
         forthOption: LawProviderOption;
@@ -13,6 +14,7 @@ export interface LawProviderSettings {
 
 export const DEFAULT_SETTINGS: LawProviderSettings = {
     lawProviderOptions: {
+        firstOption: 'lexsoft',
         secondOption: 'dejure',
         thirdOption: 'lexmea',
         forthOption: 'buzer',
@@ -22,10 +24,12 @@ export const DEFAULT_SETTINGS: LawProviderSettings = {
 
 export class LawProviderSettingTab extends PluginSettingTab {
     plugin: ExamplePlugin;
+    private dropdowns: { setting: Setting; errorSpan: HTMLSpanElement; dropdown: HTMLSelectElement }[];
 
     constructor(app: App, plugin: ExamplePlugin) {
         super(app, plugin);
         this.plugin = plugin;
+        this.dropdowns = [];
     }
 
     display(): void {
@@ -46,28 +50,72 @@ export class LawProviderSettingTab extends PluginSettingTab {
             buzer: 'Buzer',
             rewis: 'Rewis'
         };
+        
+        new Setting(containerEl)
+        .setName('1. Wahl')
+        .setDesc('LexSoft ist standardmäßig als erste Option festgelegt.')
+        .addDropdown(dropdown => {
+            dropdown.addOption('lexsoft', 'LexSoft');
+            dropdown.setValue(this.plugin.settings.lawProviderOptions.firstOption);
+            dropdown.setDisabled(true);
+            dropdown.onChange(async (value) => {
+                this.plugin.settings.lawProviderOptions.firstOption = value as LawProviderOption;
+                await this.plugin.saveSettings();
+            });
+        });
 
         const createDropdown = (name: string, desc: string, settingKey: keyof LawProviderSettings['lawProviderOptions']) => {
-            new Setting(containerEl)
+            const setting = new Setting(containerEl)
                 .setName(name)
-                .setDesc(desc)
-                .addDropdown(dropdown => {
-                    providers.forEach(provider => {
-                        dropdown.addOption(provider, providerDisplayNames[provider]);
-                    });
-                    dropdown.setValue(this.plugin.settings.lawProviderOptions[settingKey]);
-                    dropdown.onChange(async (value: string) => {
-                        const lawProviderOption = value as LawProviderOption;
-                        this.plugin.settings.lawProviderOptions[settingKey] = lawProviderOption;
-                        await this.plugin.saveSettings();
-                    });
+                .setDesc(desc);
+
+                const errorSpan = setting.settingEl.createEl('span', {
+                    cls: 'law-provider-error'
                 });
+
+            let dropdown: HTMLSelectElement;
+            setting.addDropdown(d => {
+                dropdown = d.selectEl;
+                providers.forEach(provider => {
+                    d.addOption(provider, providerDisplayNames[provider]);
+                });
+                d.setValue(this.plugin.settings.lawProviderOptions[settingKey]);
+                d.onChange(async (value: string) => {
+                    const lawProviderOption = value as LawProviderOption;
+                    this.plugin.settings.lawProviderOptions[settingKey] = lawProviderOption;
+                    await this.plugin.saveSettings();
+                    this.checkForDuplicates();
+                });
+            });
+
+            return { setting, errorSpan, dropdown: dropdown! };
         };
 
         // Erstelle Dropdowns für die verbleibenden Optionen
-        createDropdown('1. Wahl', 'Falls Gesetz bei LexSoft nicht verfügbar ist, soll geschaut werden in:', 'secondOption');
-        createDropdown('2. Wahl', 'Falls Gesetz beim vorherigen Anbieter nicht verfügbar ist, soll geschaut werden in:', 'thirdOption');
-        createDropdown('3. Wahl', 'Falls Gesetz beim vorherigen Anbieter nicht verfügbar ist, soll geschaut werden in:', 'forthOption');
-        createDropdown('4. Wahl', 'Falls Gesetz beim vorherigen Anbieter nicht verfügbar ist, soll geschaut werden in:', 'fifthOption');
+        this.dropdowns = [
+            createDropdown('2. Wahl', 'Falls Gesetz bei LexSoft nicht verfügbar ist, soll geschaut werden in:', 'secondOption'),
+            createDropdown('3. Wahl', 'Falls Gesetz beim vorherigen Anbieter nicht verfügbar ist, soll geschaut werden in:', 'thirdOption'),
+            createDropdown('4. Wahl', 'Falls Gesetz beim vorherigen Anbieter nicht verfügbar ist, soll geschaut werden in:', 'forthOption'),
+            createDropdown('5. Wahl', 'Falls Gesetz beim vorherigen Anbieter nicht verfügbar ist, soll geschaut werden in:', 'fifthOption')
+        ];
+
+        this.checkForDuplicates();
+    }
+
+    private checkForDuplicates(): void {
+        const selectedValues = this.dropdowns
+            .map(d => d.dropdown?.value)
+            .filter((value): value is string => value !== undefined);
+        selectedValues.unshift('lexsoft'); // Add the fixed first option
+    
+        this.dropdowns.forEach((dropdown, index) => {
+            if (!dropdown.dropdown) return; // Skip if dropdown is not initialized
+    
+            const currentValue = selectedValues[index + 1]; // +1 because of the fixed first option
+            const isDuplicate = selectedValues.indexOf(currentValue) !== index + 1;
+            
+            dropdown.errorSpan.style.display = isDuplicate ? 'inline' : 'none';
+            dropdown.errorSpan.textContent = isDuplicate ? 'Dieser Anbieter wurde bereits ausgewählt.' : '';
+        });
     }
 }
