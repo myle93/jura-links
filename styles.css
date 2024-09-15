@@ -44,3 +44,10 @@
 .margin-bottom {
     margin-right: 5px; /* Passe den Wert nach Bedarf an */
 }
+
+.law-provider-error {
+    color: red;
+    font-size: 0.8em;
+    margin-left: 10px;
+    display: none;
+}
