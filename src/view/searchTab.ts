@@ -282,11 +282,11 @@ export class SearchTabView extends ItemView {
 	}
 
 	extractDejureLaws(): string[] {
-		return dejureGesetze;
+		return Object.keys(dejureGesetze);
 	}
 
 	extractRewisLaws(): string[] {
-		return rewisGesetze;
+		return Object.keys(dejureGesetze);
 	}
 
 	extractBuzerLaws(): string[] {
@@ -294,7 +294,7 @@ export class SearchTabView extends ItemView {
 	}
 
 	extractLexmeaLaws(): string[] {
-		return lexmeaGesetze;
+		return Object.keys(dejureGesetze);
 	}
 
 	clearResults(): void {
