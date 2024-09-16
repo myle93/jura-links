@@ -199,11 +199,13 @@ export class SearchTabView extends ItemView {
 			cls: "scroll-container",
 		});
 
-		const laws = lexsoftGesetze[bundesland];
-		if (laws) {
-			Object.keys(laws).forEach((abbreviation) => {
-				scrollContainer.createEl("div", { text: abbreviation });
-			});
+		const gesetze = lexsoftGesetze[bundesland];
+		if (gesetze) {
+			Object.entries(gesetze)
+				.map(([key, value]) => `${key}: ${value.title}`)
+				.forEach((abbreviation) => {
+					scrollContainer.createEl("div", { text: abbreviation });
+				});
 		}
 		scrollContainer.createEl("div", { cls: "bottom-spacer" });
 	}
@@ -235,7 +237,8 @@ export class SearchTabView extends ItemView {
 				});
 
 				// Gesetze des Bundeslandes
-				Object.keys(gesetze)
+				Object.entries(gesetze)
+					.map(([key, value]) => `${key}: ${value.title}`)
 					.sort((a, b) => a.localeCompare(b))
 					.forEach((gesetz) => {
 						scrollContainer.createEl("div", {
@@ -275,26 +278,28 @@ export class SearchTabView extends ItemView {
 		scrollContainer.createEl("div", { cls: "bottom-spacer" });
 	}
 
-	extractLexsoftLaws(): string[] {
-		return Object.values(lexsoftGesetze).flatMap((state) =>
-			Object.keys(state)
+	extractDejureLaws(): string[] {
+		return Object.entries(dejureGesetze).map(
+			([key, value]) => `${key}: ${value.title}`
 		);
 	}
 
-	extractDejureLaws(): string[] {
-		return Object.keys(dejureGesetze);
-	}
-
 	extractRewisLaws(): string[] {
-		return Object.keys(dejureGesetze);
+		return Object.entries(rewisGesetze).map(
+			([key, value]) => `${key}: ${value.title}`
+		);
 	}
 
 	extractBuzerLaws(): string[] {
-		return Object.keys(buzerGesetze);
+		return Object.entries(buzerGesetze).map(
+			([key, value]) => `${key}: ${value.title}`
+		);
 	}
 
 	extractLexmeaLaws(): string[] {
-		return Object.keys(dejureGesetze);
+		return Object.entries(lexmeaGesetze).map(
+			([key, value]) => `${key}: ${value.title}`
+		);
 	}
 
 	clearResults(): void {
