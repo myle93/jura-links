@@ -30,7 +30,13 @@ test.each([
 		gesetz: `AVBFernwärmeV`,
 		norm: `1`,
 		provider: `rewis`,
-		expected: `https://rewis.io/gesetze/avbfernwarmev/p/1-avbfernwarmev`,
+		expected: `https://rewis.io/gesetze/avbfernwarmev/p/1%2Davbfernwarmev`,
+	},
+	{
+		gesetz: `aabg`,
+		norm: `1`,
+		provider: `rewis`,
+		expected: `https://rewis.io/gesetze/aabg/p/aabg%2D1`,
 	},
 ])(
 	"getLawUrlByProvider: should returns $expected given $provider, $gesetz, $norm",

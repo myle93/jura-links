@@ -1,8 +1,8 @@
 {
-	"id": "legal-reference-highlighter",
-	"name": "Legal Reference Highlighter",
+	"id": "jura-links",
+	"name": "Jura Links",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
-	"description": "Highlight german legal references and insert hyperlink in Obsidian",
+	"description": "Create hyperlink for german legal references in Obsidian",
 	"isDesktopOnly": false
 }

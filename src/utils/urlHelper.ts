@@ -1,15 +1,15 @@
-import { buzerGesetze } from "../static/buzerGesetze";
-import { dejureGesetze } from "../static/dejureGesetze";
-import { lexmeaGesetze } from "../static/lexmeaGesetze";
-import { lexsoftGesetze } from "../static/lexsoftGesetze";
-import { rewisGesetze } from "../static/rewisGesetze";
+import { buzerGesetzeLowerCased } from "../static/buzerGesetze";
+import { dejureGesetzeLowerCased } from "../static/dejureGesetze";
+import { lexmeaGesetzeLowerCased } from "../static/lexmeaGesetze";
+import { lexsoftGesetzeLowerCased } from "../static/lexsoftGesetze";
+import { rewisGesetzeLowerCased } from "../static/rewisGesetze";
 import { LawProviderOption, LawProviderOptions } from "../types/providerOption";
 import { DejureUrl, LawProviderUrl } from "../types/url";
 
 function getDejureUrl(gesetz: string, norm: string): string {
 	const lawUrl = DejureUrl.LAW;
 	gesetz = gesetz.toLowerCase();
-	if (dejureGesetze.indexOf(gesetz) !== -1) {
+	if (dejureGesetzeLowerCased.indexOf(gesetz) !== -1) {
 		return `${lawUrl}${gesetz}/${norm}.html`;
 	}
 	return "";
@@ -19,8 +19,11 @@ function getBuzerUrl(gesetz: string, norm: string): string {
 	const lawUrl = LawProviderUrl.BUZER;
 	gesetz = gesetz.toLowerCase();
 
-	if (buzerGesetze[gesetz] && buzerGesetze[gesetz][norm]) {
-		return `${lawUrl}${buzerGesetze[gesetz][norm]}`;
+	if (
+		buzerGesetzeLowerCased[gesetz] &&
+		buzerGesetzeLowerCased[gesetz]["norms"][norm]
+	) {
+		return `${lawUrl}${buzerGesetzeLowerCased[gesetz]["norms"][norm]}`;
 	}
 	return "";
 }
@@ -29,7 +32,7 @@ function getLexmeaUrl(gesetz: string, norm: string): string {
 	const lawUrl = LawProviderUrl.LEXMEA;
 	gesetz = gesetz.toLowerCase();
 
-	if (lexmeaGesetze.indexOf(gesetz) !== -1) {
+	if (lexmeaGesetzeLowerCased.indexOf(gesetz) !== -1) {
 		return `${lawUrl}${gesetz}/${norm}`;
 	}
 	return "";
@@ -39,9 +42,9 @@ function getLexsoftUrl(gesetz: string, norm: string): string {
 	const lawUrl = LawProviderUrl.LEXSOFT;
 	gesetz = gesetz.toLowerCase();
 
-	for (const [_, law] of Object.entries(lexsoftGesetze)) {
-		if (law[gesetz] && law[gesetz][norm]) {
-			return `${lawUrl}${law[gesetz][norm]}`;
+	for (const [_, law] of Object.entries(lexsoftGesetzeLowerCased)) {
+		if (law[gesetz] && law[gesetz]["norms"][norm]) {
+			return `${lawUrl}${law[gesetz]["norms"][norm]}`;
 		}
 	}
 	return "";
@@ -51,14 +54,22 @@ function getRewisUrl(gesetz: string, norm: string): string {
 	const lawUrl = LawProviderUrl.REWIS;
 	gesetz = gesetz.toLowerCase();
 
-	if (rewisGesetze.indexOf(gesetz) !== -1) {
-		gesetz = gesetz
-			.replace(/ü/g, "u")
-			.replace(/ä/g, "a")
-			.replace(/ä/g, "o");
-		return `${lawUrl}${gesetz}/p/${norm}-${gesetz}`;
+	const foundGesetz = rewisGesetzeLowerCased[gesetz];
+	if (!foundGesetz) {
+		return "";
 	}
-	return "";
+
+	if (foundGesetz.lawNormOrder) {
+		return `${lawUrl}${foundGesetz.url}/p/${foundGesetz.url}-${norm}`.replace(
+			"-",
+			"%2D"
+		);
+	}
+
+	return `${lawUrl}${foundGesetz.url}/p/${norm}-${foundGesetz.url}`.replace(
+		"-",
+		"%2D"
+	);
 }
 
 function getLawUrlByProvider(
@@ -90,7 +101,6 @@ function getLawUrlByProviderOptions(
 	lawProviders: LawProviderOptions
 ): string {
 	let lawUrl = getLawUrlByProvider(gesetz, norm, lawProviders.firstOption);
-
 	if (lawUrl) {
 		return lawUrl;
 	}
