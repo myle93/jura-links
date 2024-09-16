@@ -54,14 +54,22 @@ function getRewisUrl(gesetz: string, norm: string): string {
 	const lawUrl = LawProviderUrl.REWIS;
 	gesetz = gesetz.toLowerCase();
 
-	if (rewisGesetzeLowerCased.indexOf(gesetz) !== -1) {
-		gesetz = gesetz
-			.replace(/ü/g, "u")
-			.replace(/ä/g, "a")
-			.replace(/ä/g, "o");
-		return `${lawUrl}${gesetz}/p/${gesetz}%2D${norm}`;
+	const foundGesetz = rewisGesetzeLowerCased[gesetz];
+	if (!foundGesetz) {
+		return "";
 	}
-	return "";
+
+	if (foundGesetz.lawNormOrder) {
+		return `${lawUrl}${foundGesetz.url}/p/${foundGesetz.url}-${norm}`.replace(
+			"-",
+			"%2D"
+		);
+	}
+
+	return `${lawUrl}${foundGesetz.url}/p/${norm}-${foundGesetz.url}`.replace(
+		"-",
+		"%2D"
+	);
 }
 
 function getLawUrlByProvider(
