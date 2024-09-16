@@ -1,7 +1,7 @@
 {
-	"name": "obsidian-legal-reference-highlighter-plugin",
+	"name": "obsidian-jura-links-plugin",
 	"version": "1.0.0",
-	"description": "This is a plugin for Obsidian to highlight and link geman legal references.",
+	"description": "This is a plugin for Obsidian to create hyperlink for geman legal references.",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
