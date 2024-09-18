@@ -1011,22 +1011,22 @@ export const rewisGesetze: RewisGesetze = {
 		lawNormOrder: true,
 	},
 	AEUV: {
-		url: "aeuv",
+		url: "aeuv-europaische-union",
 		title: "Vertrag \u00fcber die Arbeitsweise der Europ\u00e4ischen Union",
 		lawNormOrder: false,
 	},
 	DSGVO: {
-		url: "dsgvo",
+		url: "dsgvo-europaische-union",
 		title: "Datenschutz-Grundverordnung",
 		lawNormOrder: false,
 	},
 	EUV: {
-		url: "euv",
+		url: "euv-europaische-union",
 		title: "Vertrag \u00fcber die Europ\u00e4ische Union",
 		lawNormOrder: false,
 	},
 	MMVO: {
-		url: "mmvo",
+		url: "mmvo-europaische-union",
 		title: "Marktmissbrauchsverordnung",
 		lawNormOrder: false,
 	},
