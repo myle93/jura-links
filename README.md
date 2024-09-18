@@ -1,8 +1,21 @@
-# Obsidian Law Article HighLighter
+# Jura-Links
+Die effziente Methode, um mit allen jurstischen Nachweisen zu arbeiten.
 
-## Description
+## Beschreibung
 
-This project is an Obsidian plugin called "Obsidian Law Article Highlighter". It provides functionality to recognize law articles using regular expressions, highlight them, create hyperlinks to law articles, and preview them with iframes. The plugin aims to enhance the experience of working with law-related content in Obsidian.
+Jura-Links wurde insbesondere für Jurastudierende, aber auch darüber hinaus für alle anderen Personen entwickelt, die sich in ihren Notizen mit Gesetzen und Urteilen befassen.
+Dieses Plugin sorgt dafür, dass alle eure angegebenen Normen, Aktenzeichen von Gerichtsurteilen, aber auch Funststellenangaben von Zeitschriften erkannt und mit diversen Gesetzesanbietern verlinkt werden. 
+Folgende Gesetzesanbieter werden unterstützt:
+- Dejure
+- Rewis.io
+- Buzer
+- LexMea (insbesondere für Studierende geeignet!)
+- LexSoft (Quelle für Landesgesetze)
+
+Außerdem bietet Jura-Links ein praktisches Such- und Filterfenster an, um alle dem Plugin bekannten Gesetze zu durchsuchen.
+
+## Wie funktioniert das?
+Jura-Links arbeitet mit vorgegebenen Zeichenmustern (sog. *Regular Expressions*), um Gesetzesangaben, Aktenzeichen und Fundstellenangaben erkennen zu können. Wenn es ein Muster erkannt hat, verlinkt es den Text als Markdownlink im Format (Anzeigetext)[Link].
 
 ## Project setup
 
