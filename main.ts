@@ -34,7 +34,7 @@ export default class LegalReferencePlugin extends Plugin {
 
 		this.initSearchTab();
 
-		this.addRibbonIcon("scale", "Gesetzes-Suche", () => {
+		this.addRibbonIcon("scale", "Gesetzessuche", () => {
 			this.searchTab.activateView();
 		});
 
