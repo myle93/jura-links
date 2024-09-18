@@ -42,11 +42,17 @@ function findAndLinkLawReferences(
 }
 
 function findAndLinkCaseReferences(fileContent: string): string {
-    return fileContent.replace(caseRegex, match => `[${match}](${DejureUrl.CASE}${match})`);
+    return fileContent.replace(caseRegex, match => {
+        const encodedMatch = encodeURIComponent(match);
+        return `[${match}](${DejureUrl.CASE}${encodedMatch})`;
+    });
 }
 
 function findAndLinkJournalReferences(fileContent: string): string {
-    return fileContent.replace(journalRegex, match => `[${match}](${DejureUrl.JOURNAL}${match})`);
+    return fileContent.replace(journalRegex, match => {
+        const encodedMatch = encodeURIComponent(match);
+        return `[${match}](${DejureUrl.JOURNAL}${encodedMatch})`;
+    });
 }
 
 function getHyperlinkForLawIfExists(
