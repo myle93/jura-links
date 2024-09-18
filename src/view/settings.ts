@@ -136,18 +136,21 @@ export class LawProviderSettingTab extends PluginSettingTab {
 			.map((d) => d.dropdown?.value)
 			.filter((value): value is string => value !== undefined);
 		selectedValues.unshift("lexsoft"); // Add the fixed first option
-
+	
 		this.dropdowns.forEach((dropdown, index) => {
 			if (!dropdown.dropdown) return; // Skip if dropdown is not initialized
-
+	
 			const currentValue = selectedValues[index + 1]; // +1 because of the fixed first option
 			const isDuplicate =
 				selectedValues.indexOf(currentValue) !== index + 1;
-
-			dropdown.errorSpan.style.display = isDuplicate ? "inline" : "none";
-			dropdown.errorSpan.textContent = isDuplicate
-				? "Dieser Anbieter wurde bereits ausgewählt."
-				: "";
+	
+			if (isDuplicate) {
+				dropdown.errorSpan.classList.add("visible");
+				dropdown.errorSpan.textContent = "Dieser Anbieter wurde bereits ausgewählt.";
+			} else {
+				dropdown.errorSpan.classList.remove("visible");
+				dropdown.errorSpan.textContent = "";
+			}
 		});
 	}
 }
