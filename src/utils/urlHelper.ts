@@ -66,7 +66,7 @@ function getRewisUrl(gesetz: string, norm: string): string {
 		);
 	}
 
-	return `${lawUrl}${foundGesetz.url}/p/${norm}-${foundGesetz.url}`.replace(
+	return `${lawUrl}${foundGesetz.url}/p/${norm}-${foundGesetz.url.replace("-europaische-union", "")}`.replace(
 		"-",
 		"%2D"
 	);
