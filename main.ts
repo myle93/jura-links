@@ -46,7 +46,7 @@ export default class LegalReferencePlugin extends Plugin {
 
 		this.addCommand({
 			id: "apply",
-			name: "apply",
+			name: "Verlinkung starten",
 			editorCallback: (editor: Editor) => {
 				const content = editor.getDoc().getValue();
 				const newContent = this.findAndLinkLegalReferences(content);
