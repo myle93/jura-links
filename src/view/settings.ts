@@ -4,6 +4,7 @@ import { LawProviderOption, LawProviderOptions } from "../types/providerOption";
 
 export interface LawProviderSettings {
 	lawProviderOptions: LawProviderOptions;
+	executeOnFileOpen: boolean;
 }
 
 export const DEFAULT_SETTINGS: LawProviderSettings = {
@@ -14,6 +15,7 @@ export const DEFAULT_SETTINGS: LawProviderSettings = {
 		forthOption: "buzer",
 		fifthOption: "rewis",
 	},
+	executeOnFileOpen: true,
 };
 
 export class LawProviderSettingTab extends PluginSettingTab {
@@ -34,6 +36,17 @@ export class LawProviderSettingTab extends PluginSettingTab {
 		const { containerEl } = this;
 
 		containerEl.empty();
+
+		new Setting(containerEl)
+        .setName("Bei jedem Öffnen der Datei ausführen")
+        .setDesc("Aktivieren Sie diese Option, um das Plugin bei jedem Öffnen der Notiz auszuführen.")
+        .addToggle(toggle => {
+            toggle.setValue(this.plugin.settings.executeOnFileOpen);
+            toggle.onChange(async (value) => {
+                this.plugin.settings.executeOnFileOpen = value;
+                await this.plugin.saveSettings();
+            });
+        });
 
 		containerEl.createEl("p", {
 			text: "LexSoft wurde standardmäßig als erster Anbieter ausgewählt, um die spezielleren Landesgesetze zuerst zu suchen. Die weiteren Anbieter werden in der Reihenfolge ihrer Auswahl durchsucht, falls das Gesetz bei LexSoft nicht gefunden wurde. Die übrigen Anbieter enthalten Bundes- und EU-Gesetze.",
