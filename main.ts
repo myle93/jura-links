@@ -39,7 +39,9 @@ export default class LegalReferencePlugin extends Plugin {
 		});
 
 		this.app.workspace.on("active-leaf-change", () => {
-			this.readActiveFileAndLinkLegalArticles();
+			if (this.settings.executeOnFileOpen) {
+				this.readActiveFileAndLinkLegalArticles();
+			}
 		});
 
 		this.addCommand({
