@@ -13,7 +13,9 @@ function findAndLinkLawReferences(
         fifthOption: "rewis",
     }
 ): string {
-    if (!lawRegex.test(fileContent)) return fileContent;
+    if (!lawRegex.test(fileContent)) {
+        return fileContent;
+    }
 
     return fileContent.replace(lawRegex, (match, ...args) => {
         const groups = args[args.length - 1];
@@ -21,19 +23,29 @@ function findAndLinkLawReferences(
         gesetz = gesetz === "brüssel-ia-vo" ? "eugvvo" : gesetz;
 
         let lawMatch = groups.p2;
-        const replaceNorm = (normGroup: string, norm: string) => {
-            const link = getHyperlinkForLawIfExists(normGroup.trim(), gesetz, norm.trim(), lawProviderOptions);
-            lawMatch = lawMatch.replace(normGroup, link);
-        };
 
-        replaceNorm(groups.normgr_first, groups.norm_first);
-        if (groups.norm_last) replaceNorm(groups.normgr_last, groups.norm_last);
+        // Process first norm
+        const firstNormGroup = groups.normgr_first.trim();
+        const firstNorm = groups.norm_first;
+        const firstNormLink = getHyperlinkForLawIfExists(firstNormGroup, gesetz, firstNorm, lawProviderOptions);
+        lawMatch = lawMatch.replace(firstNormGroup, firstNormLink);
 
+        // Process last norm if exists
+        if (groups.norm_last && groups.normgr_last) {
+            const lastNormGroup = groups.normgr_last.trim();
+            const lastNorm = groups.norm_last.trim();
+            const lastNormLink = getHyperlinkForLawIfExists(lastNormGroup, gesetz, lastNorm, lawProviderOptions);
+            lawMatch = lawMatch.replace(lastNormGroup, lastNormLink);
+        }
+
+        // Process chain of laws
         if (groups.p1 !== "§") {
-            lawMatch = lawMatch.replace(lawChainRegex, (chainMatch: any, ...chainArgs: (string | any)[]) => {
+            lawMatch = lawMatch.replace(lawChainRegex, (chainMatch: string, ...chainArgs: (string | any)[]) => {
                 const chainGroups = chainArgs[chainArgs.length - 1];
-                replaceNorm(chainGroups.normgr, chainGroups.norm);
-                return chainMatch;
+                const norm = chainGroups.norm.trim();
+                const normGroup = chainGroups.normgr.trim();
+                const normLink = getHyperlinkForLawIfExists(normGroup, gesetz, norm, lawProviderOptions);
+                return chainMatch.replace(normGroup, normLink);
             });
         }
 
