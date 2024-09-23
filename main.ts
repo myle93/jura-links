@@ -34,17 +34,19 @@ export default class LegalReferencePlugin extends Plugin {
 
 		this.initSearchTab();
 
-		this.addRibbonIcon("scale", "Gesetzes-Suche", () => {
+		this.addRibbonIcon("scale", "Gesetzessuche", () => {
 			this.searchTab.activateView();
 		});
 
 		this.app.workspace.on("active-leaf-change", () => {
-			this.readActiveFileAndLinkLegalArticles();
+			if (this.settings.executeOnFileOpen) {
+				this.readActiveFileAndLinkLegalArticles();
+			}
 		});
 
 		this.addCommand({
 			id: "apply",
-			name: "apply",
+			name: "Verlinkung starten",
 			editorCallback: (editor: Editor) => {
 				const content = editor.getDoc().getValue();
 				const newContent = this.findAndLinkLegalReferences(content);

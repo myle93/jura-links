@@ -4,6 +4,7 @@ import { LawProviderOption, LawProviderOptions } from "../types/providerOption";
 
 export interface LawProviderSettings {
 	lawProviderOptions: LawProviderOptions;
+	executeOnFileOpen: boolean;
 }
 
 export const DEFAULT_SETTINGS: LawProviderSettings = {
@@ -14,6 +15,7 @@ export const DEFAULT_SETTINGS: LawProviderSettings = {
 		forthOption: "buzer",
 		fifthOption: "rewis",
 	},
+	executeOnFileOpen: true,
 };
 
 export class LawProviderSettingTab extends PluginSettingTab {
@@ -34,6 +36,17 @@ export class LawProviderSettingTab extends PluginSettingTab {
 		const { containerEl } = this;
 
 		containerEl.empty();
+
+		new Setting(containerEl)
+        .setName("Bei jedem Öffnen der Datei ausführen")
+        .setDesc("Aktivieren Sie diese Option, um das Plugin bei jedem Öffnen der Notiz auszuführen.")
+        .addToggle(toggle => {
+            toggle.setValue(this.plugin.settings.executeOnFileOpen);
+            toggle.onChange(async (value) => {
+                this.plugin.settings.executeOnFileOpen = value;
+                await this.plugin.saveSettings();
+            });
+        });
 
 		containerEl.createEl("p", {
 			text: "LexSoft wurde standardmäßig als erster Anbieter ausgewählt, um die spezielleren Landesgesetze zuerst zu suchen. Die weiteren Anbieter werden in der Reihenfolge ihrer Auswahl durchsucht, falls das Gesetz bei LexSoft nicht gefunden wurde. Die übrigen Anbieter enthalten Bundes- und EU-Gesetze.",
@@ -136,18 +149,21 @@ export class LawProviderSettingTab extends PluginSettingTab {
 			.map((d) => d.dropdown?.value)
 			.filter((value): value is string => value !== undefined);
 		selectedValues.unshift("lexsoft"); // Add the fixed first option
-
+	
 		this.dropdowns.forEach((dropdown, index) => {
 			if (!dropdown.dropdown) return; // Skip if dropdown is not initialized
-
+	
 			const currentValue = selectedValues[index + 1]; // +1 because of the fixed first option
 			const isDuplicate =
 				selectedValues.indexOf(currentValue) !== index + 1;
-
-			dropdown.errorSpan.style.display = isDuplicate ? "inline" : "none";
-			dropdown.errorSpan.textContent = isDuplicate
-				? "Dieser Anbieter wurde bereits ausgewählt."
-				: "";
+	
+			if (isDuplicate) {
+				dropdown.errorSpan.classList.add("visible");
+				dropdown.errorSpan.textContent = "Dieser Anbieter wurde bereits ausgewählt.";
+			} else {
+				dropdown.errorSpan.classList.remove("visible");
+				dropdown.errorSpan.textContent = "";
+			}
 		});
 	}
 }

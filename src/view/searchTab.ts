@@ -66,22 +66,22 @@ export class SearchTabView extends ItemView {
 			cls: "law-results",
 		});
 
-		controlsContainer.createEl("h2", { text: "Gesetzes-Suche" });
+		new Setting(controlsContainer).setName("Jura-Links").setHeading();
 
 		// Suchfeld
 		new Setting(controlsContainer)
-			.setName("Gesetzesabkürzung")
-			.setDesc("Geben Sie die Gesetzesabkürzung ein.")
-			.addText((text) =>
+			.setName("Gesetzessuche")
+			.setDesc("Suchen Sie nach der Gesetzesabkürzung oder den Gesetzestitel.")
+			.addText((text) => {
+				text.inputEl.addClass("setting-item");
 				text.onChange((value) => {
 					this.searchLaw(value);
-				})
-			);
+				});
+			});
 
 		// Filter 1: Bundesländer Dropdown
 		const bundeslandDropdown = new DropdownComponent(controlsContainer);
 		this.createBundeslandFilter(bundeslandDropdown);
-		bundeslandDropdown.selectEl.addClass("margin-bottom");
 
 		// Filter 2: Gesetzesanbieter Dropdown
 		const gesetzesAnbieterDropdown = new DropdownComponent(
@@ -90,12 +90,10 @@ export class SearchTabView extends ItemView {
 		this.createAnbieterFilter(gesetzesAnbieterDropdown);
 
 		// Container für den Reset-Button
-		const resetButtonContainer = controlsContainer.createEl("div", {
-			cls: "reset-button-container margin-top",
-		});
+		const resetButtonContainer = controlsContainer.createEl("div");
 
 		const resetButton = new ButtonComponent(resetButtonContainer);
-		resetButton.setButtonText("Zurücksetzen").onClick(() => {
+		resetButton.setButtonText("↻ Zurücksetzen").onClick(() => {
 			this.resetView();
 		});
 
@@ -119,68 +117,106 @@ export class SearchTabView extends ItemView {
 	searchLaw(query: string): void {
 		this.clearResults();
 		if (!this.resultsContainer) return;
-
-		const allLaws = [
-			...this.extractDejureLaws().map((law) => ({
-				law,
-				provider: "Dejure",
-			})),
-			...this.extractRewisLaws().map((law) => ({
-				law,
-				provider: "Rewis",
-			})),
-			...this.extractBuzerLaws().map((law) => ({
-				law,
-				provider: "Buzer",
-			})),
-			...this.extractLexmeaLaws().map((law) => ({
-				law,
-				provider: "Lexmea",
-			})),
+	  
+		const allLaws: Array<{ law: string; provider: string; state?: string }> = [
+		  ...this.extractDejureLaws().map((law) => ({
+			law,
+			provider: "Dejure",
+		  })),
+		  ...this.extractRewisLaws().map((law) => ({
+			law,
+			provider: "Rewis",
+		  })),
+		  ...this.extractBuzerLaws().map((law) => ({
+			law,
+			provider: "Buzer",
+		  })),
+		  ...this.extractLexmeaLaws().map((law) => ({
+			law,
+			provider: "Lexmea",
+		  })),
+		  ...this.extractLexsoftLaws().map((law) => ({
+			law: law.law,
+			provider: "LexSoft",
+			state: law.state,
+		  })),
 		];
-
+	  
 		const filteredLaws = allLaws.filter((item) =>
-			item.law.toLowerCase().includes(query.toLowerCase())
+		  item.law.toLowerCase().includes(query.toLowerCase())
 		);
-
+	  
 		if (filteredLaws.length > 0) {
-			const groupedByProvider = filteredLaws.reduce((acc, item) => {
-				if (!acc[item.provider]) {
-					acc[item.provider] = [];
-				}
-				acc[item.provider].push(item.law);
-				return acc;
-			}, {} as Record<string, string[]>);
-
-			Object.entries(groupedByProvider).forEach(([provider, laws]) => {
-				if (this.resultsContainer) {
-					// Anbieter fett markiert anzeigen
-					this.resultsContainer.createEl("div", {
-						text: provider,
-						cls: "header",
-					});
-
-					// Gesetze unter dem Anbieter auflisten
-					laws.forEach((law) => {
-						if (this.resultsContainer) {
-							this.resultsContainer.createEl("div", {
-								text: law,
-								cls: "gesetz-item",
-							});
-						}
-					});
-				}
-			});
-		} else {
-			if (this.resultsContainer) {
-				this.resultsContainer.createEl("div", {
-					text: "Keine Gesetze gefunden.",
-				});
+		  const groupedByProvider = filteredLaws.reduce((acc, item) => {
+			if (!acc[item.provider]) {
+			  acc[item.provider] = {};
 			}
+			if (item.provider === "LexSoft") {
+			  if (item.state && !acc[item.provider][item.state]) {
+				acc[item.provider][item.state] = [];
+			  }
+			  if (item.state) {
+				  acc[item.provider][item.state].push(item.law);
+			  }
+			} else {
+			  if (!acc[item.provider]["laws"]) {
+				acc[item.provider]["laws"] = [];
+			  }
+			  acc[item.provider]["laws"].push(item.law);
+			}
+			return acc;
+		  }, {} as Record<string, any>);
+	  
+		  Object.entries(groupedByProvider).forEach(([provider, data]) => {
+			if (this.resultsContainer) {
+			  this.resultsContainer.createEl("div", {
+				text: provider,
+				cls: "header",
+			  });
+	  
+			  if (provider === "LexSoft") {
+				Object.entries(data).forEach(([state, laws]) => {
+				  if (this.resultsContainer) {
+					this.resultsContainer.createEl("div", {
+					  text: state,
+					  cls: "subheader",
+					});
+					this.createLawTable(laws as string[], this.resultsContainer);
+				  }
+				});
+			  } else {
+				if (this.resultsContainer) {
+				  this.createLawTable(data.laws, this.resultsContainer);
+				}
+			  }
+			}
+		  });
+	  
+		} else {
+		  if (this.resultsContainer) {
+			this.resultsContainer.createEl("div", {
+			  text: "Keine Gesetze gefunden.",
+			});
+		  }
 		}
+	  
 		if (this.resultsContainer) {
-			this.resultsContainer.createEl("div", { cls: "bottom-spacer" });
+		  this.resultsContainer.createEl("div", { cls: "bottom-spacer" });
 		}
+	  }
+	  
+	
+	extractLexsoftLaws(): { law: string; state: string }[] {
+		const laws: { law: string; state: string }[] = [];
+		Object.entries(lexsoftGesetze).forEach(([state, gesetze]) => {
+			Object.entries(gesetze).forEach(([key, value]) => {
+				laws.push({
+					law: `${key}: ${value.title}`,
+					state: state,
+				});
+			});
+		});
+		return laws;
 	}
 
 	createBundeslandFilter(dropdown: DropdownComponent): void {
@@ -201,12 +237,13 @@ export class SearchTabView extends ItemView {
 
 		const gesetze = lexsoftGesetze[bundesland];
 		if (gesetze) {
-			Object.entries(gesetze)
-				.map(([key, value]) => `${key}: ${value.title}`)
-				.forEach((abbreviation) => {
-					scrollContainer.createEl("div", { text: abbreviation });
-				});
-		}
+			const table = scrollContainer.createEl("table", { cls: "gesetz-table" });
+			Object.entries(gesetze).forEach(([key, value]) => {
+				const row = table.createEl("tr");
+				row.createEl("td", { text: `${key}:`, cls: "key-cell" });
+				row.createEl("td", { text: value.title, cls: "value-cell" });
+			});
+				}
 		scrollContainer.createEl("div", { cls: "bottom-spacer" });
 	}
 
@@ -223,29 +260,23 @@ export class SearchTabView extends ItemView {
 		this.clearResults();
 		const resultContainer = this.containerEl.querySelector(".law-results");
 		if (!resultContainer) return;
-
+	
 		const scrollContainer = resultContainer.createEl("div", {
 			cls: "scroll-container",
 		});
-
+	
 		if (anbieter === "LexSoft") {
 			Object.entries(lexsoftGesetze).forEach(([bundesland, gesetze]) => {
-				// Bundesland als fettgedruckte Überschrift
 				scrollContainer.createEl("div", {
 					text: bundesland,
 					cls: "header",
 				});
-
-				// Gesetze des Bundeslandes
-				Object.entries(gesetze)
-					.map(([key, value]) => `${key}: ${value.title}`)
-					.sort((a, b) => a.localeCompare(b))
-					.forEach((gesetz) => {
-						scrollContainer.createEl("div", {
-							text: gesetz,
-							cls: "gesetz-item",
-						});
-					});
+	
+				const laws = Object.entries(gesetze)
+					.sort(([keyA, valueA], [keyB, valueB]) => keyA.localeCompare(keyB))
+					.map(([key, value]) => `${key}: ${value.title}`);
+				
+				this.createLawTable(laws, scrollContainer);
 			});
 		} else {
 			let laws: string[] = [];
@@ -270,12 +301,20 @@ export class SearchTabView extends ItemView {
 					laws = this.extractRewisLaws();
 					break;
 			}
-
-			laws.forEach((law) => {
-				scrollContainer.createEl("div", { text: law });
-			});
+	
+			this.createLawTable(laws, scrollContainer);
 		}
 		scrollContainer.createEl("div", { cls: "bottom-spacer" });
+	}
+	
+	createLawTable(laws: string[], container: HTMLElement): void {
+		const table = container.createEl("table", { cls: "gesetz-table" });
+		laws.forEach((law) => {
+			const [abbr, title] = law.split(': ');
+			const row = table.createEl("tr");
+			row.createEl("td", { text: abbr, cls: "key-cell" });
+			row.createEl("td", { text: title, cls: "value-cell" });
+		});
 	}
 
 	extractDejureLaws(): string[] {

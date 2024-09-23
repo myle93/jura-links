@@ -5,8 +5,22 @@
 }
 
 .search-tab-controls {
-    flex-shrink: 0;
+    flex-wrap: wrap;
     padding: 10px;
+}
+
+.search-tab-controls > * {
+    margin-right: 5px;
+    margin-bottom: 5px;
+
+}
+
+.search-tab-controls > *:last-child {
+    margin: 0;
+}
+
+.search-tab-controls .setting-item {
+    flex: 1;
 }
 
 .law-results {
@@ -14,35 +28,58 @@
     overflow-y: auto;
     padding: 10px;
     padding-bottom: 20px;
-    border: 1px solid #ccc;
     border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     margin: 10px;
-}
-
-.bottom-spacer {
-    height: 10px; /* Passen Sie diesen Wert an, um den gewünschten Abstand zu erhalten */
 }
 
 .scroll-container {
     height: 100%;
 }
 
+.gesetz-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    table-layout: fixed; /* Setzt die Spalten auf eine fixe Breite */
+}
+
+.gesetz-table td {
+    padding: 5px;
+    border-left: 1px solid #ccc;
+    word-wrap: break-word; /* Zeilenumbruch, falls der Text zu lang ist */
+}
+
+.key-cell {
+    width: 150px; /* Feste Breite für die erste Spalte */
+    font-weight: 500; /* Fett drucken */
+}
+
+.value-cell {
+    width: auto; /* Automatische Anpassung der restlichen Spalten */
+}
+
+.bottom-spacer {
+    height: 5px; /* Passen Sie diesen Wert an, um den gewünschten Abstand zu erhalten */
+}
+
 .header {
     font-weight: bold;
-    margin-top: 10px;
-    margin-bottom: 5px;
+    font-size: 1.2em; /* Größere Schriftgröße für die Überschrift */
+}
+
+.subheader {
+    font-weight: bold;
+    font-size: 1em; /* Größere Schriftgröße für die Unterüberschrift */
+    padding-left: 5px;
 }
 
 .gesetz-item {
     margin-left: 10px;
-}
-
-.margin-top {
-    margin-top: 5px; /* Passe den Wert nach Bedarf an */
-}
-
-.margin-bottom {
-    margin-right: 5px; /* Passe den Wert nach Bedarf an */
+    margin-bottom: 7px; /* Vergrößert den Abstand zwischen den Ergebnissen */
+    text-indent: -14px; /* Hängender Zeileneinzug */
+    padding-left: 14px; /* Hängender Zeileneinzug */
 }
 
 .law-provider-error {
@@ -50,4 +87,7 @@
     font-size: 0.8em;
     margin-left: 10px;
     display: none;
+}
+.law-provider-error.visible {
+    display: inline;
 }
