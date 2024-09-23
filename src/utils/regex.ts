@@ -2,22 +2,24 @@ import { AllLawAbbrs } from "../static/lawsAbbrs";
 
 const lawList = AllLawAbbrs.join("|");
 
+const Verbinder = "(?:\\s*(-|und|u\\.|iVm|i\\.V\\.m\\.|i\\. V\\. m\\.)\\s*";
+const VerbinderKomma = "(?:\\s*(,|-|und|u\\.|iVm|i\\.V\\.m\\.|i\\. V\\. m\\.)\\s*";
 
 function getSingleLawRegexString(suffix: string): string {
-    return `(?<normgr${suffix}>(?<norm${suffix}>\\d+(?:\\w\\b)?)\\s*(?:(Abs\\.|Absatz)\\s*(?<absatz${suffix}>\\d+(?:\\s*(-|und)\\s*\\d+)*)|(?<absatzrom${suffix}>[IVXLCDM]+(?:\\s*(,|-|und)\\s*[IVXLCDM]+)*))?\\s*(?:(S\\.|Satz)?\\s*(?<satz${suffix}>\\d+(?:\\s*(-|und)\\s*\\d+)*))?\\s*(?:(Hs\\.|Hauptsatz)\\s*(?<hauptsatz${suffix}>\\d+(?:\\s*(-|und)\\s*\\d+)*))?\\s*(?:(Alt\\.|Alternative)\\s*(?<alternative${suffix}>\\d+(?:\\s*(-|und)\\s*\\d+)*))?\\s*(?:(Var\\.|Variante)\\s*(?<variante${suffix}>\\d+(?:\\s*(-|und)\\s*\\d+)*))?\\s*(?:(Nr\\.|Nummer)\\s*(?<nr${suffix}>\\d+(?:\\w\\b)?(?:\\s*(-|und)\\s*\\d+(?:\\w\\b)?)*))?\\s*(?:(lit\\.|Buchstabe)\\s*(?<lit${suffix}>[a-z](?:\\s*(-|und)\\s*[a-z])*))?\\s*(?:(Alt\\.|Alternative)\\s*(?<alternative2${suffix}>\\d+(?:\\s*(-|und)\\s*\\d+)?))?.{0,10}?)`;
+    return `(?<normgr${suffix}>(?<norm${suffix}>\\d+(?:\\w\\b)?)\\s*(?:(Abs\\.|Absatz)\\s*(?<absatz${suffix}>\\d+${Verbinder}\\d+)*)|(?<absatzrom${suffix}>[IVXLCDM]+${VerbinderKomma}[IVXLCDM]+)*))?\\s*(?:(S\\.|Satz)?\\s*(?<satz${suffix}>\\d+${Verbinder}\\d+)*))?\\s*(?:(Hs\\.|Hauptsatz)\\s*(?<hauptsatz${suffix}>\\d+${Verbinder}\\d+)*))?\\s*(?:(Alt\\.|Alternative)\\s*(?<alternative${suffix}>\\d+${Verbinder}\\d+)*))?\\s*(?:(Var\\.|Variante)\\s*(?<variante${suffix}>\\d+${Verbinder}\\d+)*))?\\s*(?:(Nr\\.|Nummer)\\s*(?<nr${suffix}>\\d+(?:\\w\\b)?${Verbinder}\\d+(?:\\w\\b)?)*))?\\s*(?:(lit\\.|Buchstabe)\\s*(?<lit${suffix}>[a-z]${Verbinder}[a-z])*))?\\s*(?:(Alt\\.|Alternative)\\s*(?<alternative2${suffix}>\\d+${Verbinder}\\d+)?))?.{0,10}?)`;
 }
 
 export const lawRegex = new RegExp(
     `(?<!\[[^\]]{0,1})(?<p1>§+|Art\\.|Artikel)\\s*(?<p2>${getSingleLawRegexString(
         "_first"
-    )}(?:\\s*(,|-|und)\\s*${getSingleLawRegexString(
+    )}${VerbinderKomma}${getSingleLawRegexString(
         "_last"
     )})*)(?<gesetz>\\b${lawList}\\b)(?!.*?\\])`,
     "gm"
 );
 
 export const lawChainRegex = new RegExp(
-    `(?:\\s*(,|-|und)\\s*)${getSingleLawRegexString("")}`,
+    `${VerbinderKomma})${getSingleLawRegexString("")}`,
     "gm"
 );
 
