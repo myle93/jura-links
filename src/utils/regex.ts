@@ -6,7 +6,7 @@ const Verbinder = "(?:\\s*(-|und|u\\.|iVm|i\\.V\\.m\\.|i\\. V\\. m\\.)\\s*";
 const VerbinderKomma = "(?:\\s*(,|-|und|u\\.|iVm|i\\.V\\.m\\.|i\\. V\\. m\\.)\\s*";
 
 function getSingleLawRegexString(suffix: string): string {
-    return `(?<normgr${suffix}>(?<norm${suffix}>\\d+(?:\\w\\b)?)\\s*(?:(Abs\\.|Absatz)\\s*(?<absatz${suffix}>\\d+${Verbinder}\\d+)*)|(?<absatzrom${suffix}>[IVXLCDM]+${VerbinderKomma}[IVXLCDM]+)*))?\\s*(?:(S\\.|Satz)?\\s*(?<satz${suffix}>\\d+${Verbinder}\\d+)*))?\\s*(?:(Hs\\.|Hauptsatz)\\s*(?<hauptsatz${suffix}>\\d+${Verbinder}\\d+)*))?\\s*(?:(Alt\\.|Alternative)\\s*(?<alternative${suffix}>\\d+${Verbinder}\\d+)*))?\\s*(?:(Var\\.|Variante)\\s*(?<variante${suffix}>\\d+${Verbinder}\\d+)*))?\\s*(?:(Nr\\.|Nummer)\\s*(?<nr${suffix}>\\d+(?:\\w\\b)?${Verbinder}\\d+(?:\\w\\b)?)*))?\\s*(?:(lit\\.|Buchstabe)\\s*(?<lit${suffix}>[a-z]${Verbinder}[a-z])*))?\\s*(?:(Alt\\.|Alternative)\\s*(?<alternative2${suffix}>\\d+${Verbinder}\\d+)?))?.{0,10}?)`;
+    return `(?<normgr${suffix}>(?<norm${suffix}>\\d+(?:\\w\\b)?)\\s*(?:(Abs\\.|Absatz)\\s*(?<absatz${suffix}>\\d+${Verbinder}\\d+)*)|(?<absatzrom${suffix}>[IVXLCDM]+${VerbinderKomma}[IVXLCDM]+)*))?\\s*(?:(S\\.|Satz)?\\s*(?<satz${suffix}>\\d+${Verbinder}\\d+)*))?\\s*(?:(Hs\\.|Halbsatz)\\s*(?<halbsatz{suffix}>\\d+${Verbinder}\\d+)*))?\\s*(?:(Alt\\.|Alternative)\\s*(?<alternative${suffix}>\\d+${Verbinder}\\d+)*))?\\s*(?:(Var\\.|Variante)\\s*(?<variante${suffix}>\\d+${Verbinder}\\d+)*))?\\s*(?:(Nr\\.|Nummer)\\s*(?<nr${suffix}>\\d+(?:\\w\\b)?${Verbinder}\\d+(?:\\w\\b)?)*))?\\s*(?:(lit\\.|Buchstabe)\\s*(?<lit${suffix}>[a-z]${Verbinder}[a-z])*))?\\s*(?:(Alt\\.|Alternative)\\s*(?<alternative2${suffix}>\\d+${Verbinder}\\d+)?))?.{0,10}?)`;
 }
 
 export const lawRegex = new RegExp(
