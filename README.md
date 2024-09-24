@@ -1,51 +1,62 @@
 # Jura-Links
 
-Die effziente Methode, um mit allen jurstischen Nachweisen zu arbeiten.
+Die effziente Methode, um mit allen jurstischen Nachweisen zu arbeiten. Wenn dir das Plugin gefällt, dann freuen wir uns auf eine kleine Anerkennung vor dir. Dazu nutzen wit Buy Me A Coffee:
+
+<a href="https://www.buymeacoffee.com/justanotherjurastudent" target="_blank">
+    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" >
+</a>
+
 
 ## Beschreibung
 
 Jura-Links wurde insbesondere für Jurastudierende, aber auch darüber hinaus für alle anderen Personen entwickelt, die sich in ihren Notizen mit juristischen Inhalten wie Gesetzen, Urteilen und Zeitschriftenfundstellen befassen. Dieses Plugin sorgt dafür, dass alle eure angegebenen Normen, Aktenzeichen von Gerichtsurteilen, aber auch Funststellenangaben von Zeitschriften erkannt und mit diversen Gesetzesanbietern verlinkt werden. Folgende Gesetzesanbieter werden unterstützt:
-
-- Dejure
-- Rewis.io
-- Buzer
-- LexMea (insbesondere für Studierende geeignet!)
-- LexSoft (Quelle für Landesgesetze)
+> [!IMPORTANT]
+> **verfügbare Gesetzesanbieter:**
+>- Dejure
+>- Rewis.io
+>- Buzer
+>- LexMea (insbesondere für Studierende geeignet!)
+>- LexSoft (Quelle für Landesgesetze)
 
 Außerdem bietet Jura-Links ein praktisches Such- und Filterfenster an, um alle dem Plugin bekannten Gesetze zu durchsuchen. Dies ist vor allem dann sehr nützlich, wenn ihr die Abkürzung für ein bestimmtes Landesgesetz erfahren wollt.
 
 ## Funktionsweise der Verlinkung
 
-1. Schreibe deine Notiz auf.
-	- Achte hier auf die **zugelassenen Gesetzes-Schreibweisen**! Dabei gilt folgendes:
-		- Damit das Plugin die Gesetze im Anschluss erkennt, musst du **am Ende stets die Gesetzesangabe** notieren.
-		- Du kannst die **Normpräzisierungen** wie Absatz, Satz, Alternative etc. nur in **verkürzter Schreibweise** notieren, für Absatz also die römische Zahl oder Abs. (Ziffer), für Satz “S. (Ziffer)” oder unmittelbar nach dem Absatz mit der arabischen Ziffer. Ansonsten gibt es noch “Alt. (Ziffer)” für Alternative, “Var. (Ziffer)” für Variante, “Hs. (Ziffer)” für Halbsatz, “Nr. (Ziffer)” für Nummer und “lit. (Buchstabe)” für Buchstabe.
-		- Normenketten müssen mit §§ oder Art. beginnen.
-		- Innerhalb von Normenketten dienen **Kommas nur zur Abgrenzung der einzelnen Normen** (!) mit Ausnahme der weiteren Nennung eines Absatzes, sofern dieser in römischen Ziffern geschrieben wurde. Das bedeutet, man kann z. B. mehrere Sätze nur mit einem “und” (oder Abkürzung “u.”) oder “in Verbindung mit” (oder Abkürzung “iVm”, “i.V.m.” oder “i. V. m.”) verbinden.
-		- Verbindungen einer Norm mit einer anderen mittels des “i. V. m.” müssen so erfolgen, dass zum einen die Gesetzesbezeichnung hiervor steht und hiernach die verbundene Norm nochmals mit § oder Art. anfängt, also z. B. Art. 2 I GG i. V. m. Art. 1 I GG.
-		- Normenbereiche kannst du mit einem Bindestrich oder “bis” angeben. Dann wird die erste und letzte Norm verlinkt. Ebenfalls kannst du auch am Ende einer Norm “f.” oder “ff.” angeben.
-		- Landesgesetze brauchen die (für das Plugin) korrekten Gesetzesabkürzungen. Diese kannst du über das Suchfenster in der rechten Seitenleiste einsehen (dazu später mehr).
-		- <span style="background:rgba(240, 200, 0, 0.2)">Beispiele für korrekte Gesetzesangaben:</span>
-			- § 1 BGB
-			- §§ 535 I, 280 I, 241 II BGB *oder* §§ 535 Abs. 1, 280 Abs. 1, 241 Abs. 2 BGB
-			- § 244 I Nr. 1 lit. a StGB
-			- § 812 I 1 Alt. 1 BGB
-			- Art. 7 I GG
-			- §§ Art. 2 I GG i. V. m. Art. 1 I GG
-			- § 187 I, II BGB
-			- § 288 V 1 u. 2 BGB
-			- §§ 305 - 310 BGB oder §§ 305 bis 310 BGB
-			- §§ 312 ff. BGB
-			- § 1 I SOG LSA
+### 1. Schreibe deine Notiz auf.
+- Achte hier auf die **zugelassenen Gesetzes-Schreibweisen**! Dabei gilt folgendes:
+	- Damit das Plugin die Gesetze im Anschluss erkennt, musst du **am Ende stets die Gesetzesangabe** notieren.
+	- Du kannst die **Normpräzisierungen** wie Absatz, Satz, Alternative etc. nur in **verkürzter Schreibweise** notieren, für Absatz also die römische Zahl oder Abs. (Ziffer), für Satz “S. (Ziffer)” oder unmittelbar nach dem Absatz mit der arabischen Ziffer. Ansonsten gibt es noch “Alt. (Ziffer)” für Alternative, “Var. (Ziffer)” für Variante, “Hs. (Ziffer)” für Halbsatz, “Nr. (Ziffer)” für Nummer und “lit. (Buchstabe)” für Buchstabe.
+	- Normenketten müssen mit §§ oder Art. beginnen.
+	- Innerhalb von Normenketten dienen **Kommas nur zur Abgrenzung der einzelnen Normen** (!) mit Ausnahme der weiteren Nennung eines Absatzes, sofern dieser in römischen Ziffern geschrieben wurde. Das bedeutet, man kann z. B. mehrere Sätze nur mit einem “und” (oder Abkürzung “u.”) oder “in Verbindung mit” (oder Abkürzung “iVm”, “i.V.m.” oder “i. V. m.”) verbinden.
+	- Verbindungen einer Norm mit einer anderen mittels des “i. V. m.” müssen so erfolgen, dass zum einen die Gesetzesbezeichnung hiervor steht und hiernach die verbundene Norm nochmals mit § oder Art. anfängt, also z. B. Art. 2 I GG i. V. m. Art. 1 I GG.
+	- Normenbereiche kannst du mit einem Bindestrich oder “bis” angeben. Dann wird die erste und letzte Norm verlinkt. Ebenfalls kannst du auch am Ende einer Norm “f.” oder “ff.” angeben.
+	- Landesgesetze brauchen die (für das Plugin) korrekten Gesetzesabkürzungen. Diese kannst du über das Suchfenster in der rechten Seitenleiste einsehen (dazu später mehr).
 	- Bei Aktenzeichen und Zeitschriften gibt es nichts besonderes zu beachten. Das Aktenzeichen darf nicht verändert werden und die Fundstelle sollte dabei ca. so aussehen “NJW 2024, 1” oder “BGHZ 168, 1”.
-1. Rufe die Befehlspalette auf und suche nach dem **Befehl “Jura Links: Verlinkung starten”**. Es dürfte schon ausreichen, nur nach “jur” zu suchen, damit der Befehl erscheint. Aktiviere das und alle gefundenen Gesetze, Gerichtsaktenzeichen und Zeitschriftenfundstellen werden verlinkt.
-	- Das Plugin sucht nach Aktivierung dieses Befehls die aktuell bearbeitete Notiz nach diesen Jura-Nachweisen ab.
-	- In den Einstellungen dieses Plugins kannst du auch einstellen, dass die Notiz bei jedem Laden einmal hiernach durchsucht wird.
-	- In den Einstellungen dieses Plugins legst du eine Reihenfolge für die Gesetzesanbieter fest. Das bedeutet, wenn eine Normangabe gefunden wurde, soll versucht werden, dieses Gesetz mit dem ersten angegeben Gesetzesanbieter zu verlinken. Wenn dies nicht möglich ist (z. B. weil das Gesetz bei dem Anbieter fehlt), dann wird beim nächsten angegeben Anbieter geschaut, ob eine Verlinkung erfolgen kann. Diese Reihenfolge läuft u. U. bis zum letzten Anbieter, der angegeben wurde. Wenn das Gesetz bei keinem Anbieter gefunden wurde, dann entsteht kein Link.
-	- Aktenzeichen und Funstellen werden immer mit Dejure verlinkt.
-1. Alle gefundenen Nachweise sind nun im Markdownlink-Format verlinkt. Nicht verlinkt werden §-Zeichen oder “Art.” sowie die Gesetzesangabe selbst.
-	- Nun kannst du hierauf klicken und der Link wird in deinem Browser geöffnet.
-	- Solltest du das Obsidian Plugin “Surfing” heruntergeladen haben, kannst du im *Lesemodus* auf den Link mit der Maus hovern und ein Vorschaufenster des Links taucht auf. Das ist sehr nützlich! In den Einstellungen des “Surfing”-Plugins musst du nur die “Hover Popover-Einstellung” aktiviert haben.
+
+> [!TIP]
+> **Beispiele für korrekte Gesetzesangaben:**
+>- § 1 BGB
+>- §§ 535 I, 280 I, 241 II BGB *oder* §§ 535 Abs. 1, 280 Abs. 1, 241 Abs. 2 BGB
+>- § 244 I Nr. 1 lit. a StGB
+>- § 812 I 1 Alt. 1 BGB
+>- Art. 7 I GG
+>- §§ Art. 2 I GG i. V. m. Art. 1 I GG
+>- § 187 I, II BGB
+>- § 288 V 1 u. 2 BGB
+>- §§ 305 - 310 BGB _oder_ §§ 305 bis 310 BGB
+>- §§ 312 ff. BGB
+>- § 1 I SOG LSA
+
+### 2. Rufe die Befehlspalette auf 
+- Suche nach dem **Befehl “Jura Links: Verlinkung starten”**. Es dürfte schon ausreichen, nur nach “jur” zu suchen, damit der Befehl erscheint. Aktiviere das und alle gefundenen Gesetze, Gerichtsaktenzeichen und Zeitschriftenfundstellen werden verlinkt.
+- Das Plugin sucht nach Aktivierung dieses Befehls die aktuell bearbeitete Notiz nach diesen Jura-Nachweisen ab.
+- In den Einstellungen dieses Plugins kannst du auch einstellen, dass die Notiz bei jedem Laden einmal hiernach durchsucht wird.
+- In den Einstellungen dieses Plugins legst du eine Reihenfolge für die Gesetzesanbieter fest. Das bedeutet, wenn eine Normangabe gefunden wurde, soll versucht werden, dieses Gesetz mit dem ersten angegeben Gesetzesanbieter zu verlinken. Wenn dies nicht möglich ist (z. B. weil das Gesetz bei dem Anbieter fehlt), dann wird beim nächsten angegeben Anbieter geschaut, ob eine Verlinkung erfolgen kann. Diese Reihenfolge läuft u. U. bis zum letzten Anbieter, der angegeben wurde. Wenn das Gesetz bei keinem Anbieter gefunden wurde, dann entsteht kein Link.
+- Aktenzeichen und Funstellen werden immer mit Dejure verlinkt.
+### 3. Alle gefundenen Nachweise sind nun im Markdownlink-Format verlinkt. 
+- Nicht verlinkt werden §-Zeichen oder “Art.” sowie die Gesetzesangabe selbst.
+- Nun kannst du hierauf klicken und der Link wird in deinem Browser geöffnet.
+- Solltest du das Obsidian Plugin “Surfing” heruntergeladen haben, kannst du im *Lesemodus* auf den Link mit der Maus hovern und ein Vorschaufenster des Links taucht auf. Das ist sehr nützlich! In den Einstellungen des “Surfing”-Plugins musst du nur die “Hover Popover-Einstellung” aktiviert haben.
 
 ## Suchfenster
 
@@ -98,3 +109,6 @@ Ansonsten kannst du das Projekt auch klonen und folgendermaßen vorgehen:
     ```
     npm run test
     ```
+## ❤️ Danksagung
+Dieses Plugin wäre ohne die hervorragende Arbeit von Emi ([@myle93](https://github.com/myle93)) nicht möglich gewesen! Sie schrieb den Großteil des Codes.
+Außerdem danke ich auch Martin ([@S1SYPHOS](https://github.com/S1SYPHOS)), der bereits ein Programm auf PHP-Basis schrieb, um Gesetze auf Webseiten zu verlinken. Von ihm haben wir uns ein paar Dinge abgeschaut.
