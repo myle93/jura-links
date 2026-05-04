@@ -21,10 +21,10 @@ test.each([
 		expected: `https://lexmea.de/gesetz/bgb/2`,
 	},
 	{
-		gesetz: `arbgg bw`,
-		norm: `2`,
-		provider: `lexsoft`,
-		expected: `https://www.lexsoft.de/cgi-bin/lexsoft/justizportal_nrw.cgi?xid=173644,3`,
+		gesetz: `sog lsa`,
+		norm: `1`,
+		provider: `landesrecht.online`,
+		expected: `https://landesrecht.online/ST/SOG/1`,
 	},
 	{
 		gesetz: `AVBFernwärmeV`,
@@ -38,8 +38,161 @@ test.each([
 		provider: `rewis`,
 		expected: `https://rewis.io/gesetze/aabg/p/aabg%2D1`,
 	},
+	{
+		gesetz: `GG`,
+		norm: `1`,
+		provider: `lexmea`,
+		expected: `https://lexmea.de/gesetz/gg/art-1`,
+	},
+	{
+		gesetz: `gg`,
+		norm: `20`,
+		provider: `lexmea`,
+		expected: `https://lexmea.de/gesetz/gg/art-20`,
+	},
 ])(
 	"getLawUrlByProvider: should returns $expected given $provider, $gesetz, $norm",
+	(testData) => {
+		const result = getLawUrlByProvider(
+			testData.gesetz,
+			testData.norm,
+			testData.provider
+		);
+		expect(result).toBe(testData.expected);
+	}
+);
+
+// Additional tests for landesrecht.online URL patterns based on problem statement
+test.each([
+	{
+		gesetz: `POG RP`,
+		norm: `7`,
+		provider: `landesrecht.online`,
+		expected: `https://landesrecht.online/RP/POG/7`,
+		description: "POG RP removes Bundesland suffix in path"
+	},
+	{
+		gesetz: `pog rp`,
+		norm: `7`,
+		provider: `landesrecht.online`,
+		expected: `https://landesrecht.online/RP/POG/7`,
+		description: "pog rp resolves to canonical casing without suffix"
+	},
+	{
+		gesetz: `ThürBO`,
+		norm: `1`,
+		provider: `landesrecht.online`,
+		expected: `https://landesrecht.online/TH/ThürBO/1`,
+		description: "ThürBO keeps canonical casing"
+	},
+	{
+		gesetz: `thürbo`,
+		norm: `1`,
+		provider: `landesrecht.online`,
+		expected: `https://landesrecht.online/TH/ThürBO/1`,
+		description: "thürbo lower-case input maps to canonical ThürBO"
+	},
+	{
+		gesetz: `AbgG BW`,
+		norm: `1`,
+		provider: `landesrecht.online`,
+		expected: `https://landesrecht.online/BW/AbgG/1`,
+		description: "AbgG BW removes Bundesland suffix"
+	},
+	{
+		gesetz: `BW AGBMG`,
+		norm: `1`,
+		provider: `landesrecht.online`,
+		expected: `https://landesrecht.online/BW/AGBMG/1`,
+		description: "BW AGBMG removes leading Bundesland prefix"
+	},
+	{
+		gesetz: `PolG NRW`,
+		norm: `1`,
+		provider: `landesrecht.online`,
+		expected: `https://landesrecht.online/NW/PolG/1`,
+		description: "PolG NRW removes suffix for final path"
+	},
+	{
+		gesetz: `NRW PolG`,
+		norm: `1`,
+		provider: `landesrecht.online`,
+		expected: `https://landesrecht.online/NW/PolG/1`,
+		description: "NRW PolG reordered input resolves without suffix"
+	},
+	{
+		gesetz: `polg nrw`,
+		norm: `1`,
+		provider: `landesrecht.online`,
+		expected: `https://landesrecht.online/NW/PolG/1`,
+		description: "polg nrw lower-case maps to canonical PolG without suffix"
+	},
+	{
+		gesetz: `PolG NW`,
+		norm: `1`,
+		provider: `landesrecht.online`,
+		expected: `https://landesrecht.online/NW/PolG/1`,
+		description: "PolG NW canonical abbreviation maps to PolG without suffix"
+	},
+	{
+		gesetz: `SOG LSA`,
+		norm: `1`,
+		provider: `landesrecht.online`,
+		expected: `https://landesrecht.online/ST/SOG/1`,
+		description: "SOG LSA removes suffix for Sachsen-Anhalt"
+	},
+	{
+		gesetz: `AbgG MV`,
+		norm: `1`,
+		provider: `landesrecht.online`,
+		expected: `https://landesrecht.online/MV/AbgG/1`,
+		description: "AbgG MV removes suffix for Meck-Pomm"
+	},
+	{
+		gesetz: `M-V AbgG`,
+		norm: `1`,
+		provider: `landesrecht.online`,
+		expected: `https://landesrecht.online/MV/AbgG/1`,
+		description: "M-V AbgG variant converts to canonical AbgG without prefix"
+	},
+	// Problemfälle aus dem Issue
+	{
+		gesetz: `BauO Bln`,
+		norm: `1`,
+		provider: `landesrecht.online`,
+		expected: `https://landesrecht.online/BE/BauO/1`,
+		description: "BauO Bln should resolve to Berlin Bauordnung"
+	},
+	{
+		gesetz: `bauo bln`,
+		norm: `1`,
+		provider: `landesrecht.online`,
+		expected: `https://landesrecht.online/BE/BauO/1`,
+		description: "bauo bln lowercase should resolve to Berlin Bauordnung"
+	},
+	{
+		gesetz: `KV M-V`,
+		norm: `1`,
+		provider: `landesrecht.online`,
+		expected: `https://landesrecht.online/MV/KV/1`,
+		description: "KV M-V should resolve to Meck-Pomm Kommunalverfassung"
+	},
+	{
+		gesetz: `POG RP`,
+		norm: `1`,
+		provider: `landesrecht.online`,
+		expected: `https://landesrecht.online/RP/POG/1`,
+		description: "POG RP should resolve to Rheinland-Pfalz Polizeiordnungsbehördengesetz"
+	},
+	{
+		gesetz: `PAG BY`,
+		norm: `1`,
+		provider: `landesrecht.online`,
+		expected: `https://landesrecht.online/BY/PAG/1`,
+		description: "PAG BY should resolve to Bayern Polizeiaufgabengesetz"
+	},
+])(
+	"getLawUrlByProvider landesrecht.online: $description",
 	(testData) => {
 		const result = getLawUrlByProvider(
 			testData.gesetz,

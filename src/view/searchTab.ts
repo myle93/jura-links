@@ -1,11 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
 	ItemView,
 	WorkspaceLeaf,
 	DropdownComponent,
 	ButtonComponent,
 	Setting,
+	Notice,
 } from "obsidian";
-import { lexsoftGesetze } from "../static/lexsoftGesetze";
+import { Landesgesetze_mit_Namen } from "../static/Landesgesetze_mit_Namen";
 import { dejureGesetze } from "../static/dejureGesetze";
 import { rewisGesetze } from "../static/rewisGesetze";
 import { buzerGesetze } from "../static/buzerGesetze";
@@ -71,11 +73,16 @@ export class SearchTabView extends ItemView {
 		// Suchfeld
 		new Setting(controlsContainer)
 			.setName("Gesetzessuche")
-			.setDesc("Suchen Sie nach der Gesetzesabkürzung oder den Gesetzestitel.")
+			.setDesc(
+				"Suchen Sie nach der Gesetzesabkürzung oder den Gesetzestitel."
+			)
 			.addText((text) => {
 				text.inputEl.addClass("setting-item");
 				text.onChange((value) => {
-					this.searchLaw(value);
+					// Suche soll erst nach 0,5 Sekunde nach letzter Eingabe starten
+					setTimeout(() => {
+						this.searchLaw(value);
+					}, 500);
 				});
 			});
 
@@ -117,98 +124,107 @@ export class SearchTabView extends ItemView {
 	searchLaw(query: string): void {
 		this.clearResults();
 		if (!this.resultsContainer) return;
-	  
-		const allLaws: Array<{ law: string; provider: string; state?: string }> = [
-		  ...this.extractDejureLaws().map((law) => ({
-			law,
-			provider: "Dejure",
-		  })),
-		  ...this.extractRewisLaws().map((law) => ({
-			law,
-			provider: "Rewis",
-		  })),
-		  ...this.extractBuzerLaws().map((law) => ({
-			law,
-			provider: "Buzer",
-		  })),
-		  ...this.extractLexmeaLaws().map((law) => ({
-			law,
-			provider: "Lexmea",
-		  })),
-		  ...this.extractLexsoftLaws().map((law) => ({
-			law: law.law,
-			provider: "LexSoft",
-			state: law.state,
-		  })),
+
+		const allLaws: Array<{
+			law: string;
+			provider: string;
+			state?: string;
+		}> = [
+			...this.extractDejureLaws().map((law) => ({
+				law,
+				provider: "Dejure",
+			})),
+			...this.extractRewisLaws().map((law) => ({
+				law,
+				provider: "Rewis",
+			})),
+			...this.extractBuzerLaws().map((law) => ({
+				law,
+				provider: "Buzer",
+			})),
+			...this.extractLexmeaLaws().map((law) => ({
+				law,
+				provider: "Lexmea",
+			})),
+			...this.extractLandesrechtOnlineLaws().map((law) => ({
+				law: law.law,
+				provider: "Landesrecht.online",
+				state: law.state,
+			})),
 		];
-	  
+
 		const filteredLaws = allLaws.filter((item) =>
-		  item.law.toLowerCase().includes(query.toLowerCase())
+			item.law.toLowerCase().includes(query.toLowerCase())
 		);
-	  
+
 		if (filteredLaws.length > 0) {
-		  const groupedByProvider = filteredLaws.reduce((acc, item) => {
-			if (!acc[item.provider]) {
-			  acc[item.provider] = {};
-			}
-			if (item.provider === "LexSoft") {
-			  if (item.state && !acc[item.provider][item.state]) {
-				acc[item.provider][item.state] = [];
-			  }
-			  if (item.state) {
-				  acc[item.provider][item.state].push(item.law);
-			  }
-			} else {
-			  if (!acc[item.provider]["laws"]) {
-				acc[item.provider]["laws"] = [];
-			  }
-			  acc[item.provider]["laws"].push(item.law);
-			}
-			return acc;
-		  }, {} as Record<string, any>);
-	  
-		  Object.entries(groupedByProvider).forEach(([provider, data]) => {
-			if (this.resultsContainer) {
-			  this.resultsContainer.createEl("div", {
-				text: provider,
-				cls: "header",
-			  });
-	  
-			  if (provider === "LexSoft") {
-				Object.entries(data).forEach(([state, laws]) => {
-				  if (this.resultsContainer) {
-					this.resultsContainer.createEl("div", {
-					  text: state,
-					  cls: "subheader",
-					});
-					this.createLawTable(laws as string[], this.resultsContainer);
-				  }
-				});
-			  } else {
-				if (this.resultsContainer) {
-				  this.createLawTable(data.laws, this.resultsContainer);
+			const groupedByProvider = filteredLaws.reduce((acc, item) => {
+				if (!acc[item.provider]) {
+					acc[item.provider] = {};
 				}
-			  }
-			}
-		  });
-	  
-		} else {
-		  if (this.resultsContainer) {
-			this.resultsContainer.createEl("div", {
-			  text: "Keine Gesetze gefunden.",
+				if (item.provider === "Landesrecht.online") {
+					if (item.state && !acc[item.provider][item.state]) {
+						acc[item.provider][item.state] = [];
+					}
+					if (item.state) {
+						acc[item.provider][item.state].push(item.law);
+					}
+				} else {
+					if (!acc[item.provider]["laws"]) {
+						acc[item.provider]["laws"] = [];
+					}
+					acc[item.provider]["laws"].push(item.law);
+				}
+				return acc;
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			}, {} as Record<string, any>);
+
+			Object.entries(groupedByProvider).forEach(([provider, data]) => {
+				if (this.resultsContainer) {
+					this.resultsContainer.createEl("div", {
+						text: provider,
+						cls: "header",
+					});
+
+					if (provider === "Landesrecht.online") {
+						Object.entries(data).forEach(([state, laws]) => {
+							if (this.resultsContainer) {
+								this.resultsContainer.createEl("div", {
+									text: state,
+									cls: "subheader",
+								});
+								this.createLawTable(
+									laws as string[],
+									this.resultsContainer
+								);
+							}
+						});
+					} else {
+						if (this.resultsContainer) {
+							this.createLawTable(
+								data.laws,
+								this.resultsContainer
+							);
+						}
+					}
+				}
 			});
-		  }
+		} else {
+			if (this.resultsContainer) {
+				this.resultsContainer.createEl("div", {
+					text: "Keine Gesetze gefunden.",
+				});
+			}
 		}
-	  
+
 		if (this.resultsContainer) {
-		  this.resultsContainer.createEl("div", { cls: "bottom-spacer" });
+			this.resultsContainer.createEl("div", { cls: "bottom-spacer" });
 		}
-	  }
-	  
-	
-	extractLexsoftLaws(): { law: string; state: string }[] {
+	}
+
+	extractLandesrechtOnlineLaws(): { law: string; state: string }[] {
 		const laws: { law: string; state: string }[] = [];
-		Object.entries(lexsoftGesetze).forEach(([state, gesetze]) => {
+		Object.entries(Landesgesetze_mit_Namen).forEach(([state, gesetze]) => {
 			Object.entries(gesetze).forEach(([key, value]) => {
 				laws.push({
 					law: `${key}: ${value.title}`,
@@ -221,7 +237,7 @@ export class SearchTabView extends ItemView {
 
 	createBundeslandFilter(dropdown: DropdownComponent): void {
 		dropdown.addOption("", "Wählen Sie ein Bundesland");
-		Object.keys(lexsoftGesetze).forEach((state) => {
+		Object.keys(Landesgesetze_mit_Namen).forEach((state) => {
 			dropdown.addOption(state, state);
 		});
 	}
@@ -230,26 +246,54 @@ export class SearchTabView extends ItemView {
 		this.clearResults();
 		const resultContainer = this.containerEl.querySelector(".law-results");
 		if (!resultContainer) return;
-
+	
 		const scrollContainer = resultContainer.createEl("div", {
 			cls: "scroll-container",
 		});
-
-		const gesetze = lexsoftGesetze[bundesland];
+	
+		const gesetze = Landesgesetze_mit_Namen[bundesland];
 		if (gesetze) {
-			const table = scrollContainer.createEl("table", { cls: "gesetz-table" });
-			Object.entries(gesetze).forEach(([key, value]) => {
+			const table = scrollContainer.createEl("table", {
+				cls: "gesetz-table",
+			});
+			// Sortiere die Ergebnisse alphabetisch anhand des Schlüssels (Abkürzung)
+			const sortedGesetze = Object.entries(gesetze).sort(([keyA], [keyB]) =>
+				keyA.localeCompare(keyB)
+			);
+			sortedGesetze.forEach(([key, value]) => {
 				const row = table.createEl("tr");
-				row.createEl("td", { text: `${key}:`, cls: "key-cell" });
+	
+				// Abkürzung Zelle
+				const abbrCell = row.createEl("td", { cls: "key-cell" });
+				abbrCell.createEl("span", { text: key });
+	
+				// Clipboard Button
+				const copyButton = abbrCell.createEl("button", {
+					cls: "copy-button",
+				});
+				const clipboardIcon = copyButton.createEl("span", {
+					cls: "icon lucide-icon lucide-clipboard-copy",
+				});
+				copyButton.onclick = () => {
+					navigator.clipboard
+						.writeText(key)
+						.then(() => {
+							new Notice(`Abkürzung ${key} wurde kopiert!`);
+						})
+						.catch(() => {
+							new Notice("Fehler beim Kopieren der Abkürzung.");
+						});
+				};
+	
+				// Titel Zelle
 				row.createEl("td", { text: value.title, cls: "value-cell" });
 			});
-				}
-		scrollContainer.createEl("div", { cls: "bottom-spacer" });
+		}
 	}
 
 	createAnbieterFilter(dropdown: DropdownComponent): void {
 		dropdown.addOption("", "Wählen Sie einen Anbieter");
-		["Dejure", "LexSoft", "LexMea", "Buzer", "Rewis"].forEach(
+		["Dejure", "Landesrecht.online", "LexMea", "Buzer", "Rewis"].forEach(
 			(provider) => {
 				dropdown.addOption(provider, provider);
 			}
@@ -260,22 +304,24 @@ export class SearchTabView extends ItemView {
 		this.clearResults();
 		const resultContainer = this.containerEl.querySelector(".law-results");
 		if (!resultContainer) return;
-	
+
 		const scrollContainer = resultContainer.createEl("div", {
 			cls: "scroll-container",
 		});
-	
-		if (anbieter === "LexSoft") {
-			Object.entries(lexsoftGesetze).forEach(([bundesland, gesetze]) => {
+
+		if (anbieter === "Landesrecht.online") {
+			Object.entries(Landesgesetze_mit_Namen).forEach(([bundesland, gesetze]) => {
 				scrollContainer.createEl("div", {
 					text: bundesland,
 					cls: "header",
 				});
-	
+
 				const laws = Object.entries(gesetze)
-					.sort(([keyA, valueA], [keyB, valueB]) => keyA.localeCompare(keyB))
+					.sort(([keyA, valueA], [keyB, valueB]) =>
+						keyA.localeCompare(keyB)
+					)
 					.map(([key, value]) => `${key}: ${value.title}`);
-				
+
 				this.createLawTable(laws, scrollContainer);
 			});
 		} else {
@@ -301,18 +347,47 @@ export class SearchTabView extends ItemView {
 					laws = this.extractRewisLaws();
 					break;
 			}
-	
+
 			this.createLawTable(laws, scrollContainer);
 		}
 		scrollContainer.createEl("div", { cls: "bottom-spacer" });
 	}
-	
+
 	createLawTable(laws: string[], container: HTMLElement): void {
 		const table = container.createEl("table", { cls: "gesetz-table" });
 		laws.forEach((law) => {
-			const [abbr, title] = law.split(': ');
+			const [abbr, ...titleParts] = law.split(": ");
+			const title = titleParts.join(": ");
+
 			const row = table.createEl("tr");
-			row.createEl("td", { text: abbr, cls: "key-cell" });
+
+			// Abkürzung Zelle
+			const abbrCell = row.createEl("td", { cls: "key-cell" });
+			abbrCell.createEl("span", { text: abbr });
+
+			// Clipboard Button
+			const copyButton = abbrCell.createEl("button", {
+				cls: "copy-button",
+			});
+
+			// Lucide Icon Container
+			const clipboardIcon = copyButton.createEl("span", {
+				cls: "icon lucide-icon lucide-clipboard-copy",
+			});
+
+			// Beim Klick den Text in die Zwischenablage kopieren
+			copyButton.onclick = () => {
+				navigator.clipboard
+					.writeText(abbr)
+					.then(() => {
+						new Notice(`Abkürzung ${abbr} wurde kopiert!`);
+					})
+					.catch(() => {
+						new Notice("Fehler beim Kopieren der Abkürzung.");
+					});
+			};
+
+			// Titel Zelle
 			row.createEl("td", { text: title, cls: "value-cell" });
 		});
 	}

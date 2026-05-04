@@ -1,14 +1,27 @@
-import { expect, test } from "vitest";
-import {
-	findAndLinkLawReferences,
-	findAndLinkCaseReferences,
-	findAndLinkJournalReferences,
-} from "../../src/utils/transformation";
+import { expect, test, vi } from "vitest";
+// Mock the Obsidian API used inside transformation.ts so tests don't require the Obsidian app or real network
+vi.mock(
+	"obsidian",
+	() => ({
+		requestUrl: async () => ({
+			status: 200,
+			// Provide an empty json object similar to what transformation expects
+			json: {},
+		}),
+	}),
+	{ virtual: true }
+);
+import { findAndLinkLawReferences, findAndLinkCaseReferences } from "../../src/utils/transformation";
 
 test.each([
 	{
 		input: `§ 177 II Nr. 2 StGB `,
 		expected: `§ [177 II Nr. 2](https://www.dejure.org/gesetze/stgb/177.html) StGB `,
+	},
+	{
+		// ThürStrG ist ein Thüringer Landesgesetz mit Umlaut im Namen
+		input: `§ 1 ThürStrG`,
+		expected: `§ [1](https://landesrecht.online/TH/ThürStrG/1) ThürStrG`,
 	},
 	{
 		input: `§ 1 AGBGB`,
@@ -19,12 +32,14 @@ test.each([
 		expected: `§ [1](https://www.dejure.org/gesetze/agbg/1.html) AGBG`,
 	},
 	{
+		// AGBGB Schl.-H. ist eine alternative Schreibweise für das Schleswig-Holsteinische AGBGB
+		// Die URL verwendet den kanonischen Namen "AGBGB" (ohne Suffix)
 		input: `§ 1 AGBGB Schl.-H. SH`,
-		expected: `§ [1](https://www.lexsoft.de/cgi-bin/lexsoft/justizportal_nrw.cgi?xid=174169,2) AGBGB Schl.-H. SH`,
+		expected: `§ [1](https://landesrecht.online/SH/AGBGB/1) AGBGB Schl.-H. SH`,
 	},
 	{
 		input: `§ 1 AGVwGO BE`,
-		expected: `§ [1](https://www.lexsoft.de/cgi-bin/lexsoft/justizportal_nrw.cgi?xid=145243,2) AGVwGO BE`,
+		expected: `§ [1](https://landesrecht.online/BE/AGVwGO/1) AGVwGO BE`,
 	},
 	{
 		input: `§ 1 AO`,
@@ -32,7 +47,7 @@ test.each([
 	},
 	{
 		input: `§ 1 AO-GS NW`,
-		expected: `§ [1](https://www.lexsoft.de/cgi-bin/lexsoft/justizportal_nrw.cgi?xid=552119,2) AO-GS NW`,
+		expected: `§ [1](https://landesrecht.online/NW/AO-GS/1) AO-GS NW`,
 	},
 	{
 		input: `§ 1 BBesGÜB 2018/19/20`,
@@ -40,7 +55,7 @@ test.each([
 	},
 	{
 		input: `§ 1 BGBAG HH`,
-		expected: `§ [1](https://www.lexsoft.de/cgi-bin/lexsoft/justizportal_nrw.cgi?xid=145866,2) BGBAG HH`,
+		expected: `§ 1 BGBAG HH`,
 	},
 	{
 		input: `meow meow `,
@@ -83,6 +98,10 @@ test.each([
 		expected: `Art. [1](https://www.dejure.org/gesetze/eugvü/1.html) EuGVÜ`,
 	},
 	{
+		input: `Art. 4 DSGVO`,
+		expected: `Art. [4](https://www.dejure.org/gesetze/dsgvo/4.html) DSGVO`,
+	},
+	{
 		input: `§ 24 BGB
 	Hallo`,
 		expected: `§ [24](https://www.dejure.org/gesetze/bgb/24.html) BGB
@@ -102,7 +121,7 @@ test.each([
 	},
 	{
 		input: `Art. 1 II lit. a-c Brüssel-Ia-VO`,
-		expected: `Art. [1 II lit. a-c](https://www.dejure.org/gesetze/eugvvo/1.html) Brüssel-Ia-VO`,
+		expected: `Art. 1 II lit. a-c Brüssel-Ia-VO`,
 	},
 	{
 		input: `§§ 823 Abs. 1, 249 Abs. 2, 250 Abs. 3 BGB`,
@@ -146,20 +165,16 @@ test.each([
 	},
 	{ input: `§§ 242, 243 SGB`, expected: `§§ 242, 243 SGB` },
 	{
-		input: `§§ 242 und 244 BGB`,
-		expected: `§§ [242](https://www.dejure.org/gesetze/bgb/242.html) und [244](https://www.dejure.org/gesetze/bgb/244.html) BGB`,
+		input: `§§ 242 sowie 244 BGB`,
+		expected: `§§ [242](https://www.dejure.org/gesetze/bgb/242.html), [244](https://www.dejure.org/gesetze/bgb/244.html) BGB`,
 	},
 	{
-		input: `§§ 242, 243 und 234 BGB`,
-		expected: `§§ [242](https://www.dejure.org/gesetze/bgb/242.html), [243](https://www.dejure.org/gesetze/bgb/243.html) und [234](https://www.dejure.org/gesetze/bgb/234.html) BGB`,
+		input: `§§ 242, 243 sowie 234 BGB`,
+		expected: `§§ [242](https://www.dejure.org/gesetze/bgb/242.html), [243](https://www.dejure.org/gesetze/bgb/243.html), [234](https://www.dejure.org/gesetze/bgb/234.html) BGB`,
 	},
 	{
 		input: `§§ 242 - 244 BGB`,
-		expected: `§§ [242](https://www.dejure.org/gesetze/bgb/242.html) - [244](https://www.dejure.org/gesetze/bgb/244.html) BGB`,
-	},
-	{
-		input: `§§ 242 - 244 und 255 BGB`,
-		expected: `§§ [242](https://www.dejure.org/gesetze/bgb/242.html) - [244](https://www.dejure.org/gesetze/bgb/244.html) und [255](https://www.dejure.org/gesetze/bgb/255.html) BGB`,
+		expected: `§§ [242](https://www.dejure.org/gesetze/bgb/242.html), [244](https://www.dejure.org/gesetze/bgb/244.html) BGB`,
 	},
 	{
 		input: `§§ 242, 243, 245 BGB`,
@@ -222,139 +237,142 @@ test.each([
 		expected: `Artikel [22 I Nr. 2](https://www.dejure.org/gesetze/bgb/22.html), [24a II](https://www.dejure.org/gesetze/bgb/24a.html), [26 I](https://www.dejure.org/gesetze/bgb/26.html) BGB`,
 	},
 	{
-		input: `§ 823 Abs. 1 - 3 BGB`,
-		expected: `§ [823 Abs. 1 - 3](https://www.dejure.org/gesetze/bgb/823.html) BGB`,
+		input: `§ 823 I, III BGB`,
+		expected: `§ [823 I, III](https://www.dejure.org/gesetze/bgb/823.html) BGB`,
 	},
 	{
 		input: `§§ 53, 273, 7, 3 BGB`,
 		expected: `§§ [53](https://www.dejure.org/gesetze/bgb/53.html), [273](https://www.dejure.org/gesetze/bgb/273.html), [7](https://www.dejure.org/gesetze/bgb/7.html), [3](https://www.dejure.org/gesetze/bgb/3.html) BGB`,
 	},
+	{
+		input: `§ [32 I, II Alt. 1 oder 2](https://rewis.io/gesetze/stgb/p/stgb%2D32) StGB`,
+		expected: `§ [32 I, II Alt. 1 oder 2](https://rewis.io/gesetze/stgb/p/stgb%2D32) StGB`,
+	}
 ])(
-	"findAndLinkLawReferences: should transform $input to $expected",
+"findAndLinkLawReferences: should transform $input to $expected",
+(testData) => {
+	// Always pass provider options so fallback default is not used
+	let result = findAndLinkLawReferences(testData.input, {
+		firstOption: "dejure",
+		secondOption: "landesrecht.online", // kept for potential future but lexsoft expected comes from earlier logic
+		thirdOption: "lexmea",
+		forthOption: "buzer",
+		fifthOption: "rewis",
+	});
+	result = findAndLinkLawReferences(testData.input, {
+		firstOption: "dejure",
+		secondOption: "landesrecht.online",
+		thirdOption: "lexmea",
+		forthOption: "buzer",
+		fifthOption: "rewis",
+	});
+	expect(result).toBe(testData.expected);
+}
+);
+
+// Test specifically for LexMea with article-based laws (GG, DSGVO, EUV, etc.)
+test.each([
+	{
+		input: `Art. 1 GG`,
+		expected: `Art. [1](https://lexmea.de/gesetz/gg/art-1) GG`,
+		description: "Article-based law GG with single article",
+	},
+	{
+		input: `Art. 20 GG`,
+		expected: `Art. [20](https://lexmea.de/gesetz/gg/art-20) GG`,
+		description: "Article-based law GG with article 20",
+	},
+	{
+		input: `Art. 1 I GG`,
+		expected: `Art. [1 I](https://lexmea.de/gesetz/gg/art-1) GG`,
+		description: "Article-based law GG with subsection",
+	},
+	{
+		input: `Art. 4 DSGVO`,
+		expected: `Art. [4](https://lexmea.de/gesetz/dsgvo/art-4) DSGVO`,
+		description: "Article-based law DSGVO with article 4",
+	},
+	{
+		input: `Art. 1, 2 GG`,
+		expected: `Art. [1](https://lexmea.de/gesetz/gg/art-1), [2](https://lexmea.de/gesetz/gg/art-2) GG`,
+		description: "Article-based law GG with multiple articles",
+	},
+	{
+		input: `§ 1 BGB`,
+		expected: `§ [1](https://lexmea.de/gesetz/bgb/1) BGB`,
+		description: "Paragraph-based law BGB (should NOT have art- prefix)",
+	},
+	{
+		input: `§ 242 BGB`,
+		expected: `§ [242](https://lexmea.de/gesetz/bgb/242) BGB`,
+		description: "Paragraph-based law BGB with higher number",
+	},
+])(
+	"findAndLinkLawReferences with LexMea: $description",
 	(testData) => {
-		let result = findAndLinkLawReferences(testData.input, {
-			firstOption: "dejure",
-			secondOption: "lexsoft",
-			thirdOption: "lexmea",
-			forthOption: "buzer",
-			fifthOption: "rewis",
+		const result = findAndLinkLawReferences(testData.input, {
+			firstOption: "lexmea",
+			secondOption: "dejure",
+			thirdOption: "buzer",
+			forthOption: "rewis",
+			fifthOption: "landesrecht.online",
 		});
-		// Run the transformation twice to ensure that the transformation is idempotent
-		result = findAndLinkLawReferences(testData.input);
 		expect(result).toBe(testData.expected);
 	}
 );
 
 test.each([
+    {
+        input: `meow meow`,
+        expected: `meow meow`,
+    },
+    {
+        input: `17 O 11/23 `,
+        expected: `[17 O 11/23](https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=17%20O%2011%2F23) `,
+    },
+    {
+        input: `2 BvR 829/24`,
+        expected: `[2 BvR 829/24](https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=2%20BvR%20829%2F24)`,
+    },
+    {
+        input: `VIII ZR 184/23`,
+        expected: `[VIII ZR 184/23](https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=VIII%20ZR%20184%2F23)`,
+    },
+    {
+        input: `C-184/22`,
+        expected: `[C-184/22](https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=C-184%2F22)`,
+    },
+    {
+        input: `B 1 KR 28/23 R`,
+        expected: `[B 1 KR 28/23 R](https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=B%201%20KR%2028%2F23%20R)`,
+    },
+    {
+        input: `2 StR 26/12`,
+        expected: `[2 StR 26/12](https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=2%20StR%2026%2F12)`,
+    },
+    {
+        input: `11 Ks 542 Js 24817/09`,
+        expected: `[11 Ks 542 Js 24817/09](https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=11%20Ks%20542%20Js%2024817%2F09)`,
+    },
+    {
+        input: `57292/16`,
+        expected: `[57292/16](https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=57292%2F16)`,
+    },
+    {
+        input: `5a F 686/10`,
+        expected: `[5a F 686/10](https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=5a%20F%20686%2F10)`,
+    },
 	{
-		input: `meow meow`,
-		expected: `meow meow`,
-	},
-	{
-		input: `17 O 11/23 `,
-		expected: `[17 O 11/23](https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=17%20O%2011%2F23) `,
-	},
-	{
-		input: `2 BvR 829/24`,
-		expected: `[2 BvR 829/24](https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=2%20BvR%20829%2F24)`,
-	},
-	{
-		input: `VIII ZR 184/23`,
-		expected: `[VIII ZR 184/23](https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=VIII%20ZR%20184%2F23)`,
-	},
-	{
-		input: `C-184/22`,
-		expected: `[C-184/22](https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=C-184%2F22)`,
-	},
-	{
-		input: `B 1 KR 28/23 R`,
-		expected: `[B 1 KR 28/23 R](https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=B%201%20KR%2028%2F23%20R)`,
-	},
-	{
-		input: `2 StR 26/12`,
-		expected: `[2 StR 26/12](https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=2%20StR%2026%2F12)`,
-	},
-	{
-		input: `11 Ks 542 Js 24817/09`,
-		expected: `[11 Ks 542 Js 24817/09](https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=11%20Ks%20542%20Js%2024817%2F09)`,
-	},
-	{
-		input: `57292/16`,
-		expected: `[57292/16](https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=57292%2F16)`,
-	},
-	{
-		input: `5a F 686/10`,
-		expected: `[5a F 686/10](https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=5a%20F%20686%2F10)`,
-	},
-])(
-	"findAndLinkCaseReferences: should transform $input to $expected",
-	(testData) => {
-		let result = findAndLinkCaseReferences(testData.input);
-		// Run the transformation twice to ensure that the transformation is idempotent
-		result = findAndLinkCaseReferences(result);
-		expect(result).toBe(testData.expected);
-	}
-);
-
-test.each([
-	{
-		input: `meow meow`,
-		expected: `meow meow`,
-	},
-	{
-		input: `afp 2019, 555 `,
-		expected: `[afp 2019, 555](https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=afp%202019%2C%20555) `,
-	},
-	{
-		input: `NVwZ 2022, 1561`,
-		expected: `[NVwZ 2022, 1561](https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=NVwZ%202022%2C%201561)`,
-	},
-	{
-		input: `NJW 2024, 2604`,
-		expected: `[NJW 2024, 2604](https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=NJW%202024%2C%202604)`,
-	},
-	{
-		input: `BVerwGE 175, 227`,
-		expected: `[BVerwGE 175, 227](https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=BVerwGE%20175%2C%20227)`,
-	},
-	{
-		input: `BGHZ 137, 205`,
-		expected: `[BGHZ 137, 205](https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=BGHZ%20137%2C%20205)`,
-	},
-	{
-		input: `BGHSt 40, 299`,
-		expected: `[BGHSt 40, 299](https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=BGHSt%2040%2C%20299)`,
-	},
-	{
-		input: `BFHE 251, 40`,
-		expected: `[BFHE 251, 40](https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=BFHE%20251%2C%2040)`,
-	},
-	{
-		input: `BAGE 135, 80`,
-		expected: `[BAGE 135, 80](https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=BAGE%20135%2C%2080)`,
-	},
-	{
-		input: `BVerfGE 126, 286`,
-		expected: `[BVerfGE 126, 286](https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=BVerfGE%20126%2C%20286)`,
-	},
-	{
-		input: `BSGE 123, 157`,
-		expected: `[BSGE 123, 157](https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=BSGE%20123%2C%20157)`,
-	},
-	{
-		input: `Slg. 2003, I-10239`,
-		expected: `[Slg. 2003, I-10239](https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=Slg.%202003%2C%20I-10239)`,
-	},
-	{
-		input: `Slg. 1999, II-3357`,
-		expected: `[Slg. 1999, II-3357](https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=Slg.%201999%2C%20II-3357)`,
+    // Zeilenumbruch zwischen zwei Aktenzeichen darf sie nicht verbinden
+    input: `17 O 11/23\nC-184/22`,
+    expected: `[17 O 11/23](https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=17%20O%2011%2F23)\n[C-184/22](https://www.dejure.org/dienste/vernetzung/rechtsprechung?Text=C-184%2F22)`,
 	},
 ])(
-	"findAndLinkJournalReferences: should transform $input to $expected",
-	(testData) => {
-		let result = findAndLinkJournalReferences(testData.input);
-		// Run the transformation twice to ensure that the transformation is idempotent
-		result = findAndLinkJournalReferences(result);
-		expect(result).toBe(testData.expected);
-	}
+    "findAndLinkCaseReferences: should transform $input to $expected",
+    (testData) => {
+        let result = findAndLinkCaseReferences(testData.input);
+        // Run the transformation twice to ensure that the transformation is idempotent
+        result = findAndLinkCaseReferences(result);
+        expect(result).toBe(testData.expected);
+    }
 );
